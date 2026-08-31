@@ -351,7 +351,7 @@ function AttendanceDashboard() {
         </div>
       </header>
 
-      {/* FILTER CARD */}
+      {/* FILTER CARD (VIEW TOGGLE PLACED DIRECTLY INSIDE) */}
       <section className="ad-filter-card">
         {/* VIEW SELECTOR ROW */}
         <div className="ad-toggle-container">
@@ -586,7 +586,7 @@ function AttendanceDashboard() {
         </section>
       )}
 
-      {/* TABLE DATA WITH STICKY STUDENT COLUMN */}
+      {/* TABLE DATA */}
       <section className="ad-table-card">
         <div className="ad-table-header">
           <div>
@@ -632,16 +632,18 @@ function AttendanceDashboard() {
               <table>
                 <thead>
                   <tr>
-                    <th className="sticky-col-header">STUDENT</th>
+                    <th>#</th>
+                    <th>STUDENT</th>
                     <th>REG NUMBER</th>
                     <th>DEPT</th>
-                    <th>STATUS</th>
+                    <th>DAY ATTENDANCE STATUS</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedDailyStudents.map((item) => (
+                  {displayedDailyStudents.map((item, index) => (
                     <tr key={item.student.id}>
-                      <td className="sticky-col">
+                      <td className="serial">{index + 1}</td>
+                      <td>
                         <div className="ad-student">
                           <div className="ad-avatar">
                             {getStudentName(item.student)
@@ -703,7 +705,8 @@ function AttendanceDashboard() {
             <table>
               <thead>
                 <tr>
-                  <th className="sticky-col-header">STUDENT</th>
+                  <th>#</th>
+                  <th>STUDENT</th>
                   <th>DEPT</th>
                   <th>WORKING</th>
                   <th>PRESENT</th>
@@ -713,13 +716,14 @@ function AttendanceDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {displayedSummaryStudents.map((item) => {
+                {displayedSummaryStudents.map((item, index) => {
                   const percentage = item.percentage;
                   const cls = getPercentageClass(percentage);
 
                   return (
                     <tr key={item.student.id}>
-                      <td className="sticky-col">
+                      <td className="serial">{index + 1}</td>
+                      <td>
                         <div className="ad-student">
                           <div className="ad-avatar">
                             {getStudentName(item.student)
