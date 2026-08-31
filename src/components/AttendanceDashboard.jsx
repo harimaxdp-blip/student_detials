@@ -96,7 +96,7 @@ function AttendanceDashboard() {
   // View switch: "daybyday" or "summary"
   const [viewMode, setViewMode] = useState("daybyday");
 
-  // For Summary View
+  // Summary View Months
   const [fromMonth, setFromMonth] = useState(
     new Date().toISOString().slice(0, 7)
   );
@@ -104,7 +104,7 @@ function AttendanceDashboard() {
     new Date().toISOString().slice(0, 7)
   );
 
-  // For Day-by-Day View
+  // Day-by-Day View Date
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -116,9 +116,7 @@ function AttendanceDashboard() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // =====================================================
-  // FIRESTORE SYNC
-  // =====================================================
+  // Sync with Firestore
   useEffect(() => {
     const unsubStudents = onSnapshot(
       collection(db, "students"),
@@ -151,9 +149,7 @@ function AttendanceDashboard() {
   const validFromMonth = fromMonth <= toMonth ? fromMonth : toMonth;
   const validToMonth = fromMonth <= toMonth ? toMonth : fromMonth;
 
-  // =====================================================
-  // SUMMARY CALCULATIONS (MONTH RANGE)
-  // =====================================================
+  // Monthly Summary Calculations
   const classRecords = useMemo(() => {
     return records
       .filter((record) => {
@@ -221,9 +217,7 @@ function AttendanceDashboard() {
     return result;
   }, [students, classRecords, department]);
 
-  // =====================================================
-  // DAY-BY-DAY SINGLE DATE CALCULATION
-  // =====================================================
+  // Day-by-Day Calculations
   const dayRecordsForSelectedDate = useMemo(() => {
     return records.filter((r) => getDateString(r.d) === selectedDate);
   }, [records, selectedDate]);
@@ -346,7 +340,7 @@ function AttendanceDashboard() {
 
   return (
     <div className="attendance-dashboard">
-      {/* HEADER WITH GUARANTEED VISIBLE VIEW TOGGLE */}
+      {/* TOP HEADER */}
       <header className="ad-header">
         <div className="ad-header-main">
           <Link to="/a" className="ad-back">
@@ -355,30 +349,33 @@ function AttendanceDashboard() {
           <h1>Attendance Dashboard</h1>
           <p>Monitor daily presence and overall student attendance.</p>
         </div>
-
-        {/* VIEW SWITCHER TABS */}
-        <div className="ad-view-toggle">
-          <button
-            type="button"
-            className={viewMode === "daybyday" ? "active" : ""}
-            onClick={() => setViewMode("daybyday")}
-          >
-            <CalendarCheck size={16} />
-            <span>Day-by-Day</span>
-          </button>
-          <button
-            type="button"
-            className={viewMode === "summary" ? "active" : ""}
-            onClick={() => setViewMode("summary")}
-          >
-            <TableProperties size={16} />
-            <span>Monthly</span>
-          </button>
-        </div>
       </header>
 
-      {/* FILTER CONTROLS */}
+      {/* FILTER CARD (VIEW TOGGLE PLACED DIRECTLY INSIDE) */}
       <section className="ad-filter-card">
+        {/* VIEW SELECTOR ROW */}
+        <div className="ad-toggle-container">
+          <div className="ad-view-toggle">
+            <button
+              type="button"
+              className={viewMode === "daybyday" ? "active" : ""}
+              onClick={() => setViewMode("daybyday")}
+            >
+              <CalendarCheck size={16} />
+              <span>Day-by-Day</span>
+            </button>
+            <button
+              type="button"
+              className={viewMode === "summary" ? "active" : ""}
+              onClick={() => setViewMode("summary")}
+            >
+              <TableProperties size={16} />
+              <span>Monthly Summary</span>
+            </button>
+          </div>
+        </div>
+
+        {/* INPUT FILTERS */}
         <div className="ad-filter">
           {viewMode === "daybyday" ? (
             <div className="ad-field">
@@ -455,7 +452,7 @@ function AttendanceDashboard() {
           </div>
         </div>
 
-        {/* Quick Filter Buttons */}
+        {/* QUICK STATUS FILTERS */}
         <div className="ad-filter-buttons">
           {viewMode === "daybyday" ? (
             <>

@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap");
 
 :root {
-  /* Brand & Status Colors */
   --ad-primary: #6366f1;
   --ad-primary-dark: #4f46e5;
   --ad-primary-subtle: #eef2ff;
@@ -24,7 +23,6 @@
   --ad-cyan-dark: #0891b2;
   --ad-cyan-subtle: #ecfeff;
 
-  /* Surfaces & Neutrals */
   --ad-bg: #f8fafc;
   --ad-surface: #ffffff;
   --ad-text: #0f172a;
@@ -32,12 +30,10 @@
   --ad-muted: #64748b;
   --ad-border: #e2e8f0;
 
-  /* Elevation Shadows */
   --ad-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
   --ad-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
   --ad-shadow-lg: 0 14px 34px -4px rgba(15, 23, 42, 0.08);
 
-  /* Border Radii */
   --ad-radius-sm: 8px;
   --ad-radius-md: 12px;
   --ad-radius-lg: 18px;
@@ -61,7 +57,7 @@ body {
   min-height: 100vh;
   width: 100%;
   max-width: 100%;
-  padding: 32px 24px;
+  padding: 24px 20px;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--ad-text);
   background-color: var(--ad-bg);
@@ -72,28 +68,20 @@ body {
 }
 
 /* =====================================================
-   HEADER & VIEW TOGGLE (FULL MOBILE VISIBILITY)
+   HEADER CONTROLS
    ===================================================== */
 
 .ad-header {
   max-width: 1500px;
-  margin: 0 auto 28px;
+  margin: 0 auto 20px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-}
-
-@media (min-width: 860px) {
-  .ad-header {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-  }
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .ad-header-main {
-  flex: 1;
+  width: 100%;
 }
 
 .ad-back {
@@ -130,7 +118,6 @@ body {
   background-clip: text;
   color: transparent;
   line-height: 1.2;
-  word-break: break-word;
 }
 
 .ad-header p {
@@ -140,24 +127,26 @@ body {
   line-height: 1.4;
 }
 
-/* View Mode Switcher */
+/* =====================================================
+   CARD-EMBEDDED VIEW SWITCHER (PROMINENT & GUARANTEED VISIBLE)
+   ===================================================== */
+
+.ad-toggle-container {
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
 .ad-view-toggle {
   display: flex !important;
   width: 100% !important;
-  max-width: 100% !important;
-  background: #e2e8f0;
-  padding: 4px;
+  max-width: 500px;
+  background: #f1f5f9;
+  padding: 5px;
   border-radius: var(--ad-radius-md);
-  gap: 4px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
-@media (min-width: 860px) {
-  .ad-view-toggle {
-    width: auto !important;
-    display: inline-flex !important;
-  }
+  gap: 6px;
+  border: 1px solid var(--ad-border);
 }
 
 .ad-view-toggle button {
@@ -166,10 +155,10 @@ body {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   border: none;
   background: transparent;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: var(--ad-radius-sm);
   font-size: 13px;
   font-weight: 700;
@@ -187,7 +176,7 @@ body {
 .ad-view-toggle button.active {
   background: #ffffff !important;
   color: var(--ad-primary) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
 }
 
 /* =====================================================
@@ -251,7 +240,7 @@ body {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
-/* Date Step Navigator */
+/* Date Stepper */
 .day-stepper {
   display: flex;
   gap: 6px;
@@ -324,7 +313,7 @@ body {
   color: #94a3b8;
 }
 
-/* Context Filter Buttons */
+/* Filter Badges */
 .ad-filter-buttons {
   display: flex;
   gap: 8px;
@@ -599,10 +588,6 @@ body {
   font-size: 12px;
 }
 
-/* =====================================================
-   STUDENT CELLS & DEPARTMENT BADGES
-   ===================================================== */
-
 .ad-student {
   display: flex;
   align-items: center;
@@ -713,10 +698,6 @@ body {
   border: 1px solid #e2e8f0;
 }
 
-/* =====================================================
-   PERCENTAGE BARS
-   ===================================================== */
-
 .percentage-cell {
   min-width: 120px;
 }
@@ -754,10 +735,6 @@ body {
 .percentage-fill.success { background: var(--ad-green); }
 .percentage-fill.warning { background: var(--ad-yellow); }
 .percentage-fill.danger { background: var(--ad-red); }
-
-/* =====================================================
-   EMPTY & LOADING STATES
-   ===================================================== */
 
 .ad-loading,
 .ad-empty {
@@ -803,7 +780,7 @@ body {
 }
 
 /* =====================================================
-   RESPONSIVE BREAKPOINTS
+   MOBILE & TABLET BREAKPOINTS
    ===================================================== */
 
 @media (max-width: 1024px) {
@@ -833,6 +810,14 @@ body {
   .ad-filter-card {
     padding: 14px;
     border-radius: var(--ad-radius-md);
+  }
+
+  .ad-toggle-container {
+    margin-bottom: 16px;
+  }
+
+  .ad-view-toggle {
+    max-width: 100%;
   }
 
   .ad-filter {
