@@ -1213,3 +1213,104 @@ th.sticky-col {
     grid-template-columns: 1fr;
   }
 }
+/* =====================================================
+   HEADER & TOP CONTROLS (FIXED)
+   ===================================================== */
+
+.ad-header {
+  max-width: 1500px;
+  margin: 0 auto 24px;
+  display: flex;
+  flex-direction: column; /* Stacks naturally on mobile */
+  align-items: stretch;
+  gap: 16px;
+}
+
+@media (min-width: 769px) {
+  .ad-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.ad-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ad-primary);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-border);
+  border-radius: var(--ad-radius-sm);
+  box-shadow: var(--ad-shadow-sm);
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.ad-header h1 {
+  margin: 12px 0 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(22px, 5vw, 32px); /* Responsive title sizing */
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(120deg, #0f172a, #4f46e5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ad-header p {
+  margin: 0;
+  color: var(--ad-muted);
+  font-size: 13px;
+}
+
+/* View Mode Switcher - 100% visible & thumb-friendly */
+.ad-view-toggle {
+  display: flex;
+  width: 100%;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: var(--ad-radius-md);
+  gap: 4px;
+}
+
+@media (min-width: 769px) {
+  .ad-view-toggle {
+    width: auto;
+    display: inline-flex;
+  }
+}
+
+.ad-view-toggle button {
+  flex: 1; /* Equal width tabs on mobile */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  border-radius: var(--ad-radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ad-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  min-height: 42px; /* iOS/Android touch target */
+}
+
+.ad-view-toggle button svg {
+  flex-shrink: 0;
+}
+
+.ad-view-toggle button.active {
+  background: #ffffff;
+  color: var(--ad-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
