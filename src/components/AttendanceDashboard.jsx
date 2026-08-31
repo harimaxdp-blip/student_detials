@@ -13,7 +13,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   CalendarDays,
-  Percent,
   GraduationCap,
   Loader2,
   Inbox,
@@ -22,7 +21,6 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  ListFilter,
   CalendarCheck,
   TableProperties,
 } from "lucide-react";
@@ -95,7 +93,7 @@ function AttendanceDashboard() {
   const [students, setStudents] = useState([]);
   const [records, setRecords] = useState([]);
 
-  // View switch: "summary" or "daybyday"
+  // View switch: "daybyday" or "summary"
   const [viewMode, setViewMode] = useState("daybyday");
 
   // For Summary View
@@ -114,7 +112,7 @@ function AttendanceDashboard() {
   // Filters
   const [department, setDepartment] = useState("all");
   const [summaryFilter, setSummaryFilter] = useState("all");
-  const [dayStatusFilter, setDayStatusFilter] = useState("all"); // "all", "present", "absent", "late"
+  const [dayStatusFilter, setDayStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -144,7 +142,6 @@ function AttendanceDashboard() {
     };
   }, []);
 
-  // Quick navigation for dates (Prev Day / Next Day)
   const shiftDay = (days) => {
     const current = new Date(selectedDate);
     current.setDate(current.getDate() + days);
@@ -243,12 +240,10 @@ function AttendanceDashboard() {
         const dep = getDepartment(student);
         const joiningDate = getJoiningDate(student);
 
-        // Check if student joined on or before selected date
         if (joiningDate && selectedDate < joiningDate) {
           return { student, dep, status: "not-joined" };
         }
 
-        // Match attendance sheet for student's department
         const depRecord = dayRecordsForSelectedDate.find(
           (r) => r.dep === dep
         );
@@ -268,7 +263,6 @@ function AttendanceDashboard() {
       });
   }, [students, dayRecordsForSelectedDate, selectedDate, department]);
 
-  // Daily KPI calculations
   const dailyKPI = useMemo(() => {
     let present = 0;
     let absent = 0;
@@ -295,7 +289,6 @@ function AttendanceDashboard() {
     return { present, absent, late, total: singleDayData.length, percent };
   }, [singleDayData]);
 
-  // Filtered Daily Students
   const displayedDailyStudents = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -315,7 +308,6 @@ function AttendanceDashboard() {
     });
   }, [singleDayData, search, dayStatusFilter]);
 
-  // Filtered Summary Students
   const displayedSummaryStudents = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -336,13 +328,12 @@ function AttendanceDashboard() {
       .sort((a, b) => a.percentage - b.percentage);
   }, [summaryAttendanceData, search, summaryFilter]);
 
-  // Format date helper
   const formatSelectedDate = (dateStr) => {
     if (!dateStr) return "";
     return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-IN", {
       weekday: "short",
       day: "2-digit",
-      month: "long",
+      month: "short",
       year: "numeric",
     });
   };
@@ -355,29 +346,32 @@ function AttendanceDashboard() {
 
   return (
     <div className="attendance-dashboard">
-      {/* HEADER */}
+      {/* HEADER & VIEW TOGGLE */}
       <header className="ad-header">
-        <div>
+        <div className="ad-header-text">
           <Link to="/a" className="ad-back">
-            <ArrowLeft size={15} /> Attendance Entry
+            <ArrowLeft size={15} /> <span>Attendance Entry</span>
           </Link>
           <h1>Attendance Dashboard</h1>
           <p>Monitor daily presence and overall student attendance.</p>
         </div>
 
-        {/* VIEW SWITCHER */}
         <div className="ad-view-toggle">
           <button
+            type="button"
             className={viewMode === "daybyday" ? "active" : ""}
             onClick={() => setViewMode("daybyday")}
           >
-            <CalendarCheck size={16} /> Day-by-Day View
+            <CalendarCheck size={16} />
+            <span>Day-by-Day</span>
           </button>
           <button
+            type="button"
             className={viewMode === "summary" ? "active" : ""}
             onClick={() => setViewMode("summary")}
           >
-            <TableProperties size={16} /> Monthly Summary
+            <TableProperties size={16} />
+            <span>Monthly Summary</span>
           </button>
         </div>
       </header>
@@ -386,16 +380,17 @@ function AttendanceDashboard() {
       <section className="ad-filter-card">
         <div className="ad-filter">
           {viewMode === "daybyday" ? (
-            /* Day-by-day Picker */
             <div className="ad-field">
               <label>Select Date</label>
               <div className="day-stepper">
                 <button
+                  type="button"
                   className="stepper-btn"
                   onClick={() => shiftDay(-1)}
                   title="Previous Day"
+                  aria-label="Previous Day"
                 >
-                  <ChevronLeft size={16} />
+                  <ChevronLeft size={18} />
                 </button>
                 <input
                   type="date"
@@ -403,16 +398,17 @@ function AttendanceDashboard() {
                   onChange={(e) => setSelectedDate(e.target.value)}
                 />
                 <button
+                  type="button"
                   className="stepper-btn"
                   onClick={() => shiftDay(1)}
                   title="Next Day"
+                  aria-label="Next Day"
                 >
-                  <ChevronRight size={16} />
+                  <ChevronRight size={18} />
                 </button>
               </div>
             </div>
           ) : (
-            /* Monthly Range Pickers */
             <>
               <div className="ad-field">
                 <label>From Month</label>
@@ -433,7 +429,6 @@ function AttendanceDashboard() {
             </>
           )}
 
-          {/* Department Filter */}
           <div className="ad-field">
             <label>Department</label>
             <select
@@ -446,40 +441,46 @@ function AttendanceDashboard() {
             </select>
           </div>
 
-          {/* Search Box */}
-          <div className="ad-search">
-            <Search size={16} />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search student or register number..."
-            />
+          <div className="ad-field">
+            <label>Search Directory</label>
+            <div className="ad-search">
+              <Search size={16} />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search name or reg no..."
+              />
+            </div>
           </div>
         </div>
 
-        {/* Contextual Filter Buttons */}
+        {/* Quick Filter Buttons */}
         <div className="ad-filter-buttons">
           {viewMode === "daybyday" ? (
             <>
               <button
+                type="button"
                 className={dayStatusFilter === "all" ? "active" : ""}
                 onClick={() => setDayStatusFilter("all")}
               >
                 <Users size={14} /> All ({singleDayData.length})
               </button>
               <button
+                type="button"
                 className={dayStatusFilter === "present" ? "active-good" : ""}
                 onClick={() => setDayStatusFilter("present")}
               >
                 <Check size={14} /> Present ({dailyKPI.present})
               </button>
               <button
+                type="button"
                 className={dayStatusFilter === "absent" ? "active-low" : ""}
                 onClick={() => setDayStatusFilter("absent")}
               >
                 <X size={14} /> Absent ({dailyKPI.absent})
               </button>
               <button
+                type="button"
                 className={dayStatusFilter === "late" ? "active-late" : ""}
                 onClick={() => setDayStatusFilter("late")}
               >
@@ -489,18 +490,21 @@ function AttendanceDashboard() {
           ) : (
             <>
               <button
+                type="button"
                 className={summaryFilter === "all" ? "active" : ""}
                 onClick={() => setSummaryFilter("all")}
               >
                 <Users size={14} /> All Students
               </button>
               <button
+                type="button"
                 className={summaryFilter === "low" ? "active-low" : ""}
                 onClick={() => setSummaryFilter("low")}
               >
                 <AlertTriangle size={14} /> Below 75%
               </button>
               <button
+                type="button"
                 className={summaryFilter === "good" ? "active-good" : ""}
                 onClick={() => setSummaryFilter("good")}
               >
@@ -559,7 +563,7 @@ function AttendanceDashboard() {
           </div>
         </section>
       ) : (
-        <section className="ad-summary">
+        <section className="ad-summary summary-two-col">
           <div className="ad-card blue">
             <div className="ad-card-icon">
               <CalendarDays size={22} />
@@ -590,8 +594,8 @@ function AttendanceDashboard() {
           <div>
             <h2>
               {viewMode === "daybyday"
-                ? `Attendance for ${formatSelectedDate(selectedDate)}`
-                : `Summary Report`}
+                ? `Attendance: ${formatSelectedDate(selectedDate)}`
+                : "Summary Report"}
             </h2>
             <p>
               {department === "all"
@@ -604,10 +608,12 @@ function AttendanceDashboard() {
 
           <div className="ad-result-count">
             <Users size={13} />
-            {viewMode === "daybyday"
-              ? displayedDailyStudents.length
-              : displayedSummaryStudents.length}{" "}
-            students
+            <span>
+              {viewMode === "daybyday"
+                ? displayedDailyStudents.length
+                : displayedSummaryStudents.length}{" "}
+              students
+            </span>
           </div>
         </div>
 
@@ -617,12 +623,11 @@ function AttendanceDashboard() {
             <span>Loading records...</span>
           </div>
         ) : viewMode === "daybyday" ? (
-          /* ================= DAY BY DAY TABLE ================= */
           displayedDailyStudents.length === 0 ? (
             <div className="ad-empty">
               <Inbox size={40} />
               <h3>No student records found</h3>
-              <p>Try switching department or date filters.</p>
+              <p>Try switching department, status, or date filters.</p>
             </div>
           ) : (
             <div className="ad-table-wrapper">
@@ -691,8 +696,13 @@ function AttendanceDashboard() {
               </table>
             </div>
           )
+        ) : displayedSummaryStudents.length === 0 ? (
+          <div className="ad-empty">
+            <Inbox size={40} />
+            <h3>No student records found</h3>
+            <p>Try switching department or attendance threshold filters.</p>
+          </div>
         ) : (
-          /* ================= SUMMARY TABLE ================= */
           <div className="ad-table-wrapper">
             <table>
               <thead>
