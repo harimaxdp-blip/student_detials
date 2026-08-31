@@ -1,0 +1,1720 @@
+/* =========================================================
+   STUDENT INFORMATION PORTAL
+   COMPLETE RESPONSIVE CSS
+   ========================================================= */
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+.student-page,
+.student-page * {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.student-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f8fafc 0%,
+      #f2f5f9 100%
+    );
+
+  color: #172033;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.portal-header {
+  width: 100%;
+  min-height: 82px;
+
+  padding:
+    0
+    clamp(18px, 7vw, 110px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e5e9f0;
+
+  position: relative;
+  z-index: 10;
+}
+
+
+/* =========================================================
+   COLLEGE BRAND
+   ========================================================= */
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  min-width: 0;
+}
+
+.college-logo {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: #172033;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 850;
+
+  letter-spacing: -0.5px;
+
+  box-shadow:
+    0 6px 15px rgba(23, 32, 51, 0.14);
+}
+
+.college-info {
+  min-width: 0;
+}
+
+.college-info h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 16px;
+  line-height: 1.25;
+
+  font-weight: 800;
+
+  letter-spacing: 0.2px;
+
+  white-space: nowrap;
+}
+
+.college-info p {
+  margin: 4px 0 0;
+
+  color: #7b8494;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACADEMIC YEAR
+   ========================================================= */
+
+.academic-year {
+  flex-shrink: 0;
+
+  text-align: right;
+}
+
+.academic-year span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #8a94a6;
+
+  font-size: 9px;
+
+  font-weight: 650;
+
+  letter-spacing: 1.2px;
+
+  text-transform: uppercase;
+}
+
+.academic-year strong {
+  color: #172033;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.form-intro {
+  width: 100%;
+
+  min-height: 270px;
+
+  padding:
+    55px
+    clamp(20px, 7vw, 110px)
+    70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 82% 30%,
+      rgba(105, 122, 157, 0.24),
+      transparent 30%
+    ),
+    #172033;
+
+  color: #ffffff;
+}
+
+
+/* Decorative circles */
+
+.form-intro::before {
+  content: "";
+
+  position: absolute;
+
+  width: 330px;
+  height: 330px;
+
+  right: -120px;
+  top: -180px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 50%;
+}
+
+.form-intro::after {
+  content: "";
+
+  position: absolute;
+
+  width: 550px;
+  height: 550px;
+
+  right: -300px;
+  top: -290px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.045);
+
+  border-radius: 50%;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
+
+.hero-content {
+  position: relative;
+
+  z-index: 2;
+}
+
+.eyebrow {
+  display: inline-block;
+
+  margin-bottom: 8px;
+
+  color: #aeb8c9;
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  letter-spacing: 2px;
+}
+
+.hero-content h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(28px, 4vw, 42px);
+
+  line-height: 1.15;
+
+  font-weight: 800;
+
+  letter-spacing: -1px;
+}
+
+.hero-content p {
+  max-width: 580px;
+
+  margin: 11px 0 0;
+
+  color: #aeb8c9;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   YEAR BADGE
+   ========================================================= */
+
+.course-badge {
+  width: 82px;
+  height: 82px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.2);
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  position: relative;
+
+  z-index: 2;
+}
+
+.course-badge span {
+  margin-bottom: 3px;
+
+  color: #9da8ba;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.3px;
+}
+
+.course-badge strong {
+  color: #ffffff;
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   COMPLETION BAR
+   ========================================================= */
+
+.completion-wrapper {
+  width:
+    min(
+      calc(100% - 32px),
+      1050px
+    );
+
+  margin:
+    -34px
+    auto
+    0;
+
+  padding:
+    20px
+    23px;
+
+  position: relative;
+
+  z-index: 20;
+
+  background:
+    rgba(255, 255, 255, 0.98);
+
+  border:
+    1px solid
+    #e1e6ee;
+
+  border-radius: 13px;
+
+  box-shadow:
+    0 8px 25px
+    rgba(17, 24, 39, 0.07);
+}
+
+.completion-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.completion-info {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.completion-heading {
+  color: #172033;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+.completion-status {
+  color: #8992a3;
+
+  font-size: 11px;
+}
+
+.completion-percentage {
+  flex-shrink: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress-track {
+  width: 100%;
+
+  height: 7px;
+
+  margin-top: 13px;
+
+  overflow: hidden;
+
+  border-radius: 100px;
+
+  background: #e9edf3;
+}
+
+.progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #172033;
+
+  transition:
+    width 0.35s ease,
+    background 0.3s ease;
+}
+
+.progress-fill.complete {
+  background: #218739;
+}
+
+
+/* =========================================================
+   COMPLETION BOTTOM
+   ========================================================= */
+
+.completion-bottom {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 8px;
+
+  color: #98a0ae;
+
+  font-size: 10px;
+}
+
+.waiting-text {
+  color: #98a0ae;
+}
+
+.ready-text {
+  color: #218739;
+
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   FORM WRAPPER
+   ========================================================= */
+
+.form-wrapper {
+  width:
+    min(
+      calc(100% - 32px),
+      1050px
+    );
+
+  margin:
+    18px
+    auto
+    60px;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.form-block {
+  width: 100%;
+
+  margin-bottom: 16px;
+
+  padding: 34px;
+
+  background: #ffffff;
+
+  border:
+    1px solid
+    #e4e8ef;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 5px 18px
+    rgba(17, 24, 39, 0.035);
+
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.form-block:hover {
+  box-shadow:
+    0 10px 28px
+    rgba(17, 24, 39, 0.055);
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.block-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-bottom: 27px;
+}
+
+.number {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eef1f7;
+
+  color: #172033;
+
+  font-size: 12px;
+
+  font-weight: 850;
+}
+
+.block-heading h3 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 18px;
+
+  line-height: 1.3;
+
+  font-weight: 800;
+}
+
+.block-heading p {
+  margin: 4px 0 0;
+
+  color: #8992a3;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   INPUT GRID
+   ========================================================= */
+
+.input-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 21px 18px;
+}
+
+.input-group {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.input-group.wide {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+.input-group label {
+  color: #344054;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+
+  font-weight: 700;
+}
+
+.input-group label i {
+  color: #e5484d;
+
+  font-style: normal;
+
+  margin-left: 2px;
+}
+
+.optional {
+  margin-left: 6px;
+
+  color: #9aa3b1;
+
+  font-size: 9px;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  max-width: 100%;
+
+  border:
+    1px solid
+    #dce1e9;
+
+  border-radius: 9px;
+
+  background: #fbfcfe;
+
+  color: #172033;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input-group input,
+.input-group select {
+  height: 47px;
+
+  padding:
+    0
+    14px;
+}
+
+.input-group textarea {
+  min-height: 105px;
+
+  padding:
+    13px
+    14px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+   ========================================================= */
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: #a4acb9;
+
+  opacity: 1;
+}
+
+
+/* =========================================================
+   INPUT HOVER
+   ========================================================= */
+
+.input-group input:hover,
+.input-group select:hover,
+.input-group textarea:hover {
+  border-color: #c5ccd7;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: #172033;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(23, 32, 51, 0.07);
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.error-text {
+  margin-top: -2px;
+
+  color: #d14343;
+
+  font-size: 10px;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   PARENT NOTICE
+   ========================================================= */
+
+.parent-notice {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 23px;
+
+  padding:
+    13px
+    15px;
+
+  border:
+    1px solid
+    #f0d8a8;
+
+  border-radius: 9px;
+
+  background: #fffaf0;
+}
+
+.parent-notice.valid {
+  border-color: #b9dec2;
+
+  background: #f3fbf5;
+}
+
+.notice-icon {
+  width: 27px;
+  height: 27px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e6a62c;
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 850;
+}
+
+.parent-notice.valid .notice-icon {
+  background: #218739;
+}
+
+.parent-notice strong {
+  display: block;
+
+  color: #4a3b1e;
+
+  font-size: 11px;
+
+  font-weight: 750;
+}
+
+.parent-notice.valid strong {
+  color: #205c2c;
+}
+
+.parent-notice p {
+  margin: 3px 0 0;
+
+  color: #8c7a59;
+
+  font-size: 10px;
+
+  line-height: 1.4;
+}
+
+.parent-notice.valid p {
+  color: #56805f;
+}
+
+
+/* =========================================================
+   VALID PARENT PHONE
+   ========================================================= */
+
+.field-complete input {
+  border-color: #9bcba5;
+
+  background: #f7fcf8;
+}
+
+.field-complete input:focus {
+  border-color: #218739;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(33, 135, 57, 0.08);
+}
+
+
+/* =========================================================
+   COURSE OPTIONS
+   ========================================================= */
+
+.course-options {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 14px;
+}
+
+.course-option {
+  min-width: 0;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 19px;
+
+  border:
+    1px solid
+    #dce1e9;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.course-option:hover {
+  border-color: #b9c1ce;
+
+  background: #fafbfc;
+
+  transform: translateY(-1px);
+}
+
+.course-option.selected {
+  border-color: #172033;
+
+  background: #f8f9fb;
+
+  box-shadow:
+    0 4px 15px
+    rgba(23, 32, 51, 0.06);
+}
+
+
+/* =========================================================
+   HIDE RADIO
+   ========================================================= */
+
+.course-option input {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CUSTOM RADIO
+   ========================================================= */
+
+.radio-design {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  border:
+    2px solid
+    #c7ccd5;
+
+  border-radius: 50%;
+
+  position: relative;
+
+  transition:
+    border-color 0.2s ease;
+}
+
+.course-option input:checked
+  + .radio-design {
+  border-color: #172033;
+}
+
+.course-option input:checked
+  + .radio-design::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 8px;
+  height: 8px;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: #172033;
+}
+
+
+/* =========================================================
+   COURSE TEXT
+   ========================================================= */
+
+.course-text {
+  min-width: 0;
+}
+
+.course-text strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  font-weight: 750;
+}
+
+.course-text small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #8992a3;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SUBMIT AREA
+   ========================================================= */
+
+.submit-area {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding:
+    18px
+    5px
+    5px;
+}
+
+.submit-info {
+  min-width: 0;
+}
+
+.submit-info strong {
+  display: block;
+
+  color: #172033;
+
+  font-size: 14px;
+
+  font-weight: 750;
+}
+
+.submit-info p {
+  margin: 5px 0 0;
+
+  color: #8992a3;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
+
+.submit-area button {
+  min-width: 190px;
+
+  height: 49px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  padding:
+    0
+    22px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.submit-active {
+  background: #172033;
+
+  color: #ffffff;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 15px
+    rgba(23, 32, 51, 0.15);
+}
+
+.submit-active:hover {
+  background: #29344a;
+
+  box-shadow:
+    0 8px 20px
+    rgba(23, 32, 51, 0.2);
+
+  transform: translateY(-1px);
+}
+
+.submit-active:active {
+  transform: translateY(0);
+}
+
+.submit-disabled {
+  background: #dfe3e9;
+
+  color: #8992a3;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+.submit-disabled:hover {
+  background: #dfe3e9;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+.submit-area button span {
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.success-message {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin:
+    10px
+    5px
+    0;
+
+  padding: 15px;
+
+  border:
+    1px solid
+    #b9dec2;
+
+  border-radius: 10px;
+
+  background: #f3fbf5;
+}
+
+.success-icon {
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #218739;
+
+  color: #ffffff;
+
+  font-weight: 850;
+}
+
+.success-message strong {
+  color: #205c2c;
+
+  font-size: 12px;
+}
+
+.success-message p {
+  margin: 3px 0 0;
+
+  color: #56805f;
+
+  font-size: 10px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.student-footer {
+  width: 100%;
+
+  padding:
+    0
+    20px
+    35px;
+
+  text-align: center;
+
+  color: #929baa;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .portal-header {
+    padding:
+      0
+      25px;
+  }
+
+  .form-intro {
+    padding:
+      45px
+      25px
+      65px;
+  }
+
+  .completion-wrapper {
+    width:
+      calc(100% - 24px);
+  }
+
+  .form-wrapper {
+    width:
+      calc(100% - 24px);
+  }
+
+  .form-block {
+    padding:
+      28px
+      24px;
+  }
+
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-group.wide {
+    grid-column: auto;
+  }
+
+  .course-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  /* HEADER */
+
+  .portal-header {
+    min-height: 70px;
+
+    padding:
+      13px
+      16px;
+  }
+
+  .college-logo {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 11px;
+  }
+
+  .brand {
+    gap: 11px;
+  }
+
+  .college-info h1 {
+    max-width: 220px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    font-size: 13px;
+  }
+
+  .college-info p {
+    font-size: 9px;
+  }
+
+  .academic-year {
+    display: none;
+  }
+
+
+  /* HERO */
+
+  .form-intro {
+    min-height: 225px;
+
+    padding:
+      34px
+      18px
+      55px;
+  }
+
+  .hero-content h2 {
+    font-size: 26px;
+
+    letter-spacing: -0.5px;
+  }
+
+  .hero-content p {
+    max-width: 290px;
+
+    font-size: 13px;
+  }
+
+  .course-badge {
+    display: none;
+  }
+
+
+  /* COMPLETION */
+
+  .completion-wrapper {
+    width:
+      calc(100% - 16px);
+
+    margin-top: -23px;
+
+    padding: 16px;
+
+    border-radius: 11px;
+  }
+
+  .completion-top {
+    gap: 10px;
+  }
+
+  .completion-info {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 3px;
+  }
+
+  .completion-heading {
+    font-size: 12px;
+  }
+
+  .completion-status {
+    font-size: 10px;
+  }
+
+  .completion-percentage {
+    font-size: 17px;
+  }
+
+  .progress-track {
+    height: 6px;
+
+    margin-top: 11px;
+  }
+
+  .completion-bottom {
+    font-size: 9px;
+
+    line-height: 1.4;
+  }
+
+
+  /* FORM */
+
+  .form-wrapper {
+    width:
+      calc(100% - 16px);
+
+    margin-top: 14px;
+
+    margin-bottom: 40px;
+  }
+
+  .form-block {
+    padding:
+      22px
+      16px;
+
+    margin-bottom: 12px;
+
+    border-radius: 12px;
+  }
+
+
+  /* HEADING */
+
+  .block-heading {
+    gap: 11px;
+
+    margin-bottom: 21px;
+  }
+
+  .number {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 9px;
+
+    font-size: 11px;
+  }
+
+  .block-heading h3 {
+    font-size: 15px;
+  }
+
+  .block-heading p {
+    font-size: 10px;
+  }
+
+
+  /* INPUT */
+
+  .input-grid {
+    gap: 16px;
+  }
+
+  .input-group {
+    gap: 7px;
+  }
+
+  .input-group label {
+    font-size: 11px;
+  }
+
+  .input-group input,
+  .input-group select {
+    height: 48px;
+
+    padding:
+      0
+      13px;
+
+    font-size: 16px;
+  }
+
+  .input-group textarea {
+    min-height: 105px;
+
+    padding:
+      12px
+      13px;
+
+    font-size: 16px;
+  }
+
+
+  /* PARENT NOTICE */
+
+  .parent-notice {
+    align-items: flex-start;
+
+    padding: 12px;
+
+    margin-bottom: 19px;
+  }
+
+  .notice-icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  .parent-notice strong {
+    font-size: 10px;
+  }
+
+  .parent-notice p {
+    font-size: 9px;
+  }
+
+
+  /* COURSE */
+
+  .course-options {
+    gap: 10px;
+  }
+
+  .course-option {
+    padding: 15px;
+
+    gap: 11px;
+  }
+
+  .course-text strong {
+    font-size: 12px;
+  }
+
+  .course-text small {
+    font-size: 10px;
+  }
+
+
+  /* SUBMIT */
+
+  .submit-area {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 14px;
+
+    padding:
+      15px
+      2px
+      0;
+  }
+
+  .submit-area button {
+    width: 100%;
+
+    min-width: 0;
+
+    height: 51px;
+  }
+
+
+  /* SUCCESS */
+
+  .success-message {
+    align-items: flex-start;
+
+    margin:
+      10px
+      2px
+      0;
+  }
+
+  .success-icon {
+    width: 29px;
+    height: 29px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .college-info h1 {
+    max-width: 180px;
+
+    font-size: 12px;
+  }
+
+  .college-info p {
+    font-size: 8px;
+  }
+
+  .form-intro {
+    padding:
+      30px
+      16px
+      52px;
+  }
+
+  .hero-content h2 {
+    font-size: 23px;
+  }
+
+  .completion-wrapper {
+    width:
+      calc(100% - 12px);
+
+    padding: 14px;
+  }
+
+  .form-wrapper {
+    width:
+      calc(100% - 12px);
+  }
+
+  .form-block {
+    padding:
+      20px
+      14px;
+  }
+
+  .course-option {
+    padding: 14px;
+  }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.input-group input:focus-visible,
+.input-group select:focus-visible,
+.input-group textarea:focus-visible,
+.course-option:focus-within,
+.submit-area button:focus-visible {
+  outline:
+    2px solid
+    #172033;
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .form-block,
+  .input-group input,
+  .input-group select,
+  .input-group textarea,
+  .course-option,
+  .submit-area button,
+  .progress-fill {
+    transition: none;
+  }
+
+}
