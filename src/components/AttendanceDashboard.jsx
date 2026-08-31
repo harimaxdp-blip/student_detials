@@ -346,9 +346,9 @@ function AttendanceDashboard() {
 
   return (
     <div className="attendance-dashboard">
-      {/* HEADER & VIEW TOGGLE */}
+      {/* HEADER WITH GUARANTEED VISIBLE VIEW TOGGLE */}
       <header className="ad-header">
-        <div className="ad-header-text">
+        <div className="ad-header-main">
           <Link to="/a" className="ad-back">
             <ArrowLeft size={15} /> <span>Attendance Entry</span>
           </Link>
@@ -356,6 +356,7 @@ function AttendanceDashboard() {
           <p>Monitor daily presence and overall student attendance.</p>
         </div>
 
+        {/* VIEW SWITCHER TABS */}
         <div className="ad-view-toggle">
           <button
             type="button"
@@ -371,7 +372,7 @@ function AttendanceDashboard() {
             onClick={() => setViewMode("summary")}
           >
             <TableProperties size={16} />
-            <span>Monthly Summary</span>
+            <span>Monthly</span>
           </button>
         </div>
       </header>

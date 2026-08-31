@@ -72,7 +72,7 @@ body {
 }
 
 /* =====================================================
-   HEADER & TOP CONTROLS (FULL MOBILE ADAPTIVITY)
+   HEADER & VIEW TOGGLE (FULL MOBILE VISIBILITY)
    ===================================================== */
 
 .ad-header {
@@ -92,7 +92,7 @@ body {
   }
 }
 
-.ad-header-text {
+.ad-header-main {
   flex: 1;
 }
 
@@ -142,39 +142,42 @@ body {
 
 /* View Mode Switcher */
 .ad-view-toggle {
-  display: flex;
-  width: 100%;
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
   background: #e2e8f0;
   padding: 4px;
   border-radius: var(--ad-radius-md);
   gap: 4px;
+  box-sizing: border-box;
   flex-shrink: 0;
 }
 
 @media (min-width: 860px) {
   .ad-view-toggle {
-    width: auto;
-    display: inline-flex;
+    width: auto !important;
+    display: inline-flex !important;
   }
 }
 
 .ad-view-toggle button {
-  flex: 1;
-  display: inline-flex;
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   border: none;
   background: transparent;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border-radius: var(--ad-radius-sm);
   font-size: 13px;
   font-weight: 700;
   color: var(--ad-text-secondary);
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s ease;
   min-height: 42px;
-  white-space: nowrap;
 }
 
 .ad-view-toggle button svg {
@@ -182,13 +185,13 @@ body {
 }
 
 .ad-view-toggle button.active {
-  background: #ffffff;
-  color: var(--ad-primary);
+  background: #ffffff !important;
+  color: var(--ad-primary) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* =====================================================
-   FILTER CARD & INPUT CONTROLS
+   FILTER BAR & FORM CONTROLS
    ===================================================== */
 
 .ad-filter-card {
@@ -237,6 +240,8 @@ body {
   font-weight: 600;
   color: var(--ad-text);
   transition: all 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .ad-field input:focus,
@@ -319,7 +324,7 @@ body {
   color: #94a3b8;
 }
 
-/* Contextual Filter Badges */
+/* Context Filter Buttons */
 .ad-filter-buttons {
   display: flex;
   gap: 8px;
@@ -835,7 +840,6 @@ body {
     gap: 12px;
   }
 
-  /* 2-Column KPI grid for mobile instead of 1-column stack */
   .ad-summary,
   .ad-summary.summary-two-col {
     grid-template-columns: repeat(2, 1fr);
@@ -887,7 +891,8 @@ body {
   }
 
   .ad-view-toggle button {
-    padding: 8px 10px;
-    font-size: 12px;
+    font-size: 11px !important;
+    padding: 8px 4px !important;
+    gap: 4px !important;
   }
 }
