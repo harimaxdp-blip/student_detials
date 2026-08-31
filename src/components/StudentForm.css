@@ -1,6 +1,7 @@
 /* =========================================================
    STUDENT INFORMATION PORTAL
-   COMPLETE RESPONSIVE CSS
+   COMPLETE RESPONSIVE CSS — FIXED & ENHANCED
+   TYPOGRAPHY PASS: sized up + loosened for student readability
    ========================================================= */
 
 
@@ -58,6 +59,11 @@ body,
     "Segoe UI",
     sans-serif;
 
+  /* READABILITY: crisper, cleaner text rendering across browsers */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
   overflow-x: hidden;
 }
 
@@ -100,29 +106,30 @@ body,
   min-width: 0;
 }
 
+/* FIX: "width: 63x" is not a valid CSS length (missing the "p"
+   in "px"), so the browser drops that declaration entirely and
+   width falls back to its default — the logo box stopped being
+   sized at all. Corrected to 63px. */
 .college-logo {
-  width: 48px;
-  height: 48px;
+  width: 63px;
+  height: 63px;
 
   flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 
   border-radius: 13px;
 
-  background: #172033;
+}
 
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 850;
-
-  letter-spacing: -0.5px;
-
-  box-shadow:
-    0 6px 15px rgba(23, 32, 51, 0.14);
+.college-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .college-info {
@@ -134,12 +141,12 @@ body,
 
   color: #172033;
 
-  font-size: 16px;
-  line-height: 1.25;
+  font-size: 17px;
+  line-height: 1.3;
 
   font-weight: 800;
 
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 
   white-space: nowrap;
 }
@@ -149,7 +156,7 @@ body,
 
   color: #7b8494;
 
-  font-size: 11px;
+  font-size: 12px;
 
   white-space: nowrap;
 }
@@ -172,11 +179,11 @@ body,
 
   color: #8a94a6;
 
-  font-size: 9px;
+  font-size: 10px;
 
   font-weight: 650;
 
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
 
   text-transform: uppercase;
 }
@@ -184,7 +191,7 @@ body,
 .academic-year strong {
   color: #172033;
 
-  font-size: 13px;
+  font-size: 14px;
 
   font-weight: 800;
 }
@@ -280,11 +287,11 @@ body,
 
   color: #aeb8c9;
 
-  font-size: 10px;
+  font-size: 11px;
 
   font-weight: 750;
 
-  letter-spacing: 2px;
+  letter-spacing: 1.6px;
 }
 
 .hero-content h2 {
@@ -295,23 +302,26 @@ body,
   font-size:
     clamp(28px, 4vw, 42px);
 
-  line-height: 1.15;
+  line-height: 1.2;
 
   font-weight: 800;
 
-  letter-spacing: -1px;
+  /* READABILITY: tight negative tracking makes large headings
+     harder to scan, especially for students reading on small
+     screens — loosened from -1px to a much gentler -0.2px. */
+  letter-spacing: -0.2px;
 }
 
 .hero-content p {
   max-width: 580px;
 
-  margin: 11px 0 0;
+  margin: 12px 0 0;
 
   color: #aeb8c9;
 
-  font-size: 14px;
+  font-size: 15px;
 
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 
@@ -349,11 +359,11 @@ body,
 
   color: #9da8ba;
 
-  font-size: 8px;
+  font-size: 10px;
 
   font-weight: 700;
 
-  letter-spacing: 1.3px;
+  letter-spacing: 1.1px;
 }
 
 .course-badge strong {
@@ -427,7 +437,7 @@ body,
 .completion-heading {
   color: #172033;
 
-  font-size: 13px;
+  font-size: 14px;
 
   font-weight: 800;
 }
@@ -435,7 +445,7 @@ body,
 .completion-status {
   color: #8992a3;
 
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .completion-percentage {
@@ -443,7 +453,7 @@ body,
 
   color: #172033;
 
-  font-size: 19px;
+  font-size: 20px;
 
   font-weight: 850;
 }
@@ -501,7 +511,7 @@ body,
 
   color: #98a0ae;
 
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .waiting-text {
@@ -601,7 +611,7 @@ body,
 
   color: #172033;
 
-  font-size: 12px;
+  font-size: 13px;
 
   font-weight: 850;
 }
@@ -611,9 +621,9 @@ body,
 
   color: #172033;
 
-  font-size: 18px;
+  font-size: 19px;
 
-  line-height: 1.3;
+  line-height: 1.35;
 
   font-weight: 800;
 }
@@ -623,9 +633,9 @@ body,
 
   color: #8992a3;
 
-  font-size: 12px;
+  font-size: 13px;
 
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 
@@ -666,7 +676,7 @@ body,
 .input-group label {
   color: #344054;
 
-  font-size: 12px;
+  font-size: 13px;
 
   line-height: 1.4;
 
@@ -684,11 +694,11 @@ body,
 .optional {
   margin-left: 6px;
 
-  color: #9aa3b1;
+  color: #7d879a;
 
-  font-size: 9px;
+  font-size: 11px;
 
-  font-weight: 500;
+  font-weight: 600;
 }
 
 
@@ -716,7 +726,9 @@ body,
 
   font-family: inherit;
 
-  font-size: 14px;
+  /* READABILITY: bumped from 14px so form text is comfortably
+     legible without being so small it needs squinting. */
+  font-size: 15px;
 
   transition:
     border-color 0.2s ease,
@@ -742,7 +754,7 @@ body,
 
   resize: vertical;
 
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 
@@ -789,17 +801,40 @@ body,
 
 
 /* =========================================================
-   ERROR
+   ERROR STATE
    ========================================================= */
+
+.input-group input.input-error,
+.input-group select.input-error,
+.input-group textarea.input-error {
+  border-color: #e5484d;
+
+  background: #fef6f6;
+}
+
+.input-group input.input-error:focus,
+.input-group select.input-error:focus,
+.input-group textarea.input-error:focus {
+  border-color: #d14343;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(212, 67, 67, 0.1);
+}
 
 .error-text {
   margin-top: -2px;
 
   color: #d14343;
 
-  font-size: 10px;
+  /* READABILITY: error messages are the most important text on
+     the page in the moment a student sees them — sized up and
+     given real weight so they're impossible to miss or misread. */
+  font-size: 12px;
 
-  line-height: 1.3;
+  font-weight: 600;
+
+  line-height: 1.4;
 }
 
 
@@ -827,12 +862,22 @@ body,
   border-radius: 9px;
 
   background: #fffaf0;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .parent-notice.valid {
   border-color: #b9dec2;
 
   background: #f3fbf5;
+}
+
+.parent-notice.invalid {
+  border-color: #f0b8b8;
+
+  background: #fdf3f3;
 }
 
 .notice-icon {
@@ -860,12 +905,16 @@ body,
   background: #218739;
 }
 
+.parent-notice.invalid .notice-icon {
+  background: #d14343;
+}
+
 .parent-notice strong {
   display: block;
 
   color: #4a3b1e;
 
-  font-size: 11px;
+  font-size: 12px;
 
   font-weight: 750;
 }
@@ -874,18 +923,26 @@ body,
   color: #205c2c;
 }
 
+.parent-notice.invalid strong {
+  color: #7a2323;
+}
+
 .parent-notice p {
   margin: 3px 0 0;
 
   color: #8c7a59;
 
-  font-size: 10px;
+  font-size: 12px;
 
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .parent-notice.valid p {
   color: #56805f;
+}
+
+.parent-notice.invalid p {
+  color: #a15050;
 }
 
 
@@ -922,6 +979,18 @@ body,
     );
 
   gap: 14px;
+
+  padding: 3px;
+
+  border-radius: 13px;
+
+  transition: box-shadow 0.2s ease;
+}
+
+.course-options.course-error {
+  box-shadow:
+    0 0 0 1px
+    rgba(212, 67, 67, 0.35);
 }
 
 .course-option {
@@ -1050,7 +1119,7 @@ body,
 
   color: #172033;
 
-  font-size: 13px;
+  font-size: 14px;
 
   line-height: 1.4;
 
@@ -1064,9 +1133,15 @@ body,
 
   color: #8992a3;
 
-  font-size: 11px;
+  font-size: 12px;
 
-  line-height: 1.4;
+  line-height: 1.45;
+}
+
+.course-error-text {
+  display: block;
+
+  margin-top: 8px;
 }
 
 
@@ -1098,7 +1173,7 @@ body,
 
   color: #172033;
 
-  font-size: 14px;
+  font-size: 15px;
 
   font-weight: 750;
 }
@@ -1108,9 +1183,9 @@ body,
 
   color: #8992a3;
 
-  font-size: 11px;
+  font-size: 12px;
 
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 
@@ -1141,7 +1216,7 @@ body,
 
   font-family: inherit;
 
-  font-size: 14px;
+  font-size: 15px;
 
   font-weight: 750;
 
@@ -1175,6 +1250,26 @@ body,
 
 .submit-active:active {
   transform: translateY(0);
+}
+
+.submit-area button:disabled {
+  background: #7d8699;
+
+  color: #ffffff;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+.submit-area button:disabled:hover {
+  background: #7d8699;
+
+  box-shadow: none;
+
+  transform: none;
 }
 
 .submit-disabled {
@@ -1255,7 +1350,7 @@ body,
 .success-message strong {
   color: #205c2c;
 
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .success-message p {
@@ -1263,7 +1358,9 @@ body,
 
   color: #56805f;
 
-  font-size: 10px;
+  font-size: 12px;
+
+  line-height: 1.5;
 }
 
 
@@ -1283,7 +1380,7 @@ body,
 
   color: #929baa;
 
-  font-size: 11px;
+  font-size: 12px;
 }
 
 
@@ -1370,11 +1467,11 @@ body,
 
     text-overflow: ellipsis;
 
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .college-info p {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .academic-year {
@@ -1396,13 +1493,13 @@ body,
   .hero-content h2 {
     font-size: 26px;
 
-    letter-spacing: -0.5px;
+    letter-spacing: -0.1px;
   }
 
   .hero-content p {
     max-width: 290px;
 
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .course-badge {
@@ -1436,15 +1533,15 @@ body,
   }
 
   .completion-heading {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .completion-status {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .completion-percentage {
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .progress-track {
@@ -1454,9 +1551,9 @@ body,
   }
 
   .completion-bottom {
-    font-size: 9px;
+    font-size: 10px;
 
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
 
@@ -1496,15 +1593,15 @@ body,
 
     border-radius: 9px;
 
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .block-heading h3 {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .block-heading p {
-    font-size: 10px;
+    font-size: 11px;
   }
 
 
@@ -1519,7 +1616,7 @@ body,
   }
 
   .input-group label {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .input-group input,
@@ -1530,6 +1627,8 @@ body,
       0
       13px;
 
+    /* NOTE: kept at 16px on purpose — anything smaller makes iOS
+       Safari auto-zoom into the field on focus. Do not reduce. */
     font-size: 16px;
   }
 
@@ -1560,11 +1659,11 @@ body,
   }
 
   .parent-notice strong {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .parent-notice p {
-    font-size: 9px;
+    font-size: 11px;
   }
 
 
@@ -1581,11 +1680,11 @@ body,
   }
 
   .course-text strong {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .course-text small {
-    font-size: 10px;
+    font-size: 11px;
   }
 
 
@@ -1641,11 +1740,11 @@ body,
   .college-info h1 {
     max-width: 180px;
 
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .college-info p {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .form-intro {

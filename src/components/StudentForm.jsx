@@ -6,7 +6,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import "./StudentForm.css";
-
+import collegeLogo from "../assets/img.png";
 const initialFormData = {
   fullName: "",
   dob: "",
@@ -322,12 +322,12 @@ function StudentForm() {
 
         <div className="brand">
 
-          <div className="college-logo">
-            CS
-          </div>
+<div className="college-logo">
+  <img src={collegeLogo} alt="College Logo" />
+</div>
 
           <div className="college-info">
-            <h1>YOUR COLLEGE NAME</h1>
+            <h1>Raak Arts and Science College</h1>
 
             <p>
               Department of Computer Science
