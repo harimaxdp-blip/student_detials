@@ -29,6 +29,7 @@ const STATUS = {
   PRESENT: "p",
   ABSENT: "a",
   LATE: "l",
+  NOT_JOINED: "nj",
 };
 
 function Attendance() {
@@ -52,8 +53,7 @@ function Attendance() {
 
   const [loading, setLoading] = useState(true);
 
-  const [loadingRecord, setLoadingRecord] =
-    useState(false);
+  const [loadingRecord, setLoadingRecord] = useState(false);
 
   const [saving, setSaving] = useState(false);
 
@@ -103,10 +103,12 @@ function Attendance() {
     const unsubscribe = onSnapshot(
       studentsRef,
       (snapshot) => {
-        const data = snapshot.docs.map((item) => ({
-          id: item.id,
-          ...item.data(),
-        }));
+        const data = snapshot.docs.map(
+          (item) => ({
+            id: item.id,
+            ...item.data(),
+          })
+        );
 
         setStudents(data);
         setLoading(false);
@@ -189,9 +191,7 @@ function Attendance() {
         if (department === "cs") {
           return (
             value === "cs" ||
-            value.includes(
-              "computer science"
-            ) ||
+            value.includes("computer science") ||
             value.includes("computer")
           );
         }
@@ -295,7 +295,7 @@ function Attendance() {
       const snapshot =
         await getDoc(recordRef);
 
-      // Sunday is ALWAYS holiday.
+      // Sunday is ALWAYS holiday
       if (dayName === "Sunday") {
         setDayType("holiday");
       }
@@ -315,7 +315,6 @@ function Attendance() {
         }
 
         setLoadingRecord(false);
-
         return;
       }
 
@@ -375,6 +374,7 @@ function Attendance() {
 
     setAttendance({});
     setLateNotes({});
+    setMessage("");
   };
 
   // =========================================================
@@ -389,6 +389,7 @@ function Attendance() {
     setAttendance({});
     setLateNotes({});
     setSearch("");
+    setMessage("");
   };
 
   // =========================================================
@@ -434,6 +435,26 @@ function Attendance() {
       (student) => {
         newAttendance[student.id] =
           status;
+      }
+    );
+
+    setAttendance((previous) => ({
+      ...previous,
+      ...newAttendance,
+    }));
+  };
+
+  // =========================================================
+  // MARK ALL NOT JOINED
+  // =========================================================
+
+  const markAllNotJoined = () => {
+    const newAttendance = {};
+
+    filteredStudents.forEach(
+      (student) => {
+        newAttendance[student.id] =
+          STATUS.NOT_JOINED;
       }
     );
 
@@ -537,7 +558,10 @@ function Attendance() {
       return;
     }
 
-    // Check unmarked students.
+    // =====================================================
+    // CHECK UNMARKED STUDENTS
+    // =====================================================
+
     const missingStudents =
       departmentStudents.filter(
         (student) =>
@@ -548,7 +572,7 @@ function Attendance() {
       missingStudents.length > 0
     ) {
       setMessage(
-        `${missingStudents.length} student(s) are not marked.`
+        `${missingStudents.length} student(s) are not marked. Please select Present, Absent, Late, or Not Joined.`
       );
 
       return;
@@ -567,7 +591,10 @@ function Attendance() {
         recordId
       );
 
-      // Only save notes that actually contain text.
+      // =================================================
+      // ONLY SAVE NOTES WITH TEXT
+      // =================================================
+
       const notes = {};
 
       Object.entries(
@@ -583,6 +610,10 @@ function Attendance() {
           }
         }
       );
+
+      // =================================================
+      // SAVE ATTENDANCE
+      // =================================================
 
       await setDoc(
         recordRef,
@@ -657,8 +688,6 @@ function Attendance() {
 
       await deleteDoc(recordRef);
 
-      // If deleting the currently open record,
-      // clear the screen.
       if (
         record.d === date &&
         record.dep === department
@@ -793,11 +822,20 @@ function Attendance() {
         ] === STATUS.LATE
     ).length;
 
+  const notJoinedCount =
+    filteredStudents.filter(
+      (student) =>
+        attendance[
+          student.id
+        ] === STATUS.NOT_JOINED
+    ).length;
+
   const unmarkedCount =
     filteredStudents.length -
     presentCount -
     absentCount -
-    lateCount;
+    lateCount -
+    notJoinedCount;
 
   // =========================================================
   // DATE FORMAT
@@ -873,7 +911,6 @@ function Attendance() {
 
       </header>
 
-
       {/* =====================================================
           CURRENT ATTENDANCE
           ===================================================== */}
@@ -903,7 +940,6 @@ function Attendance() {
             />
 
           </div>
-
 
           {/* DEPARTMENT */}
 
@@ -937,7 +973,6 @@ function Attendance() {
 
           </div>
 
-
           {/* DAY */}
 
           <div className="day-display">
@@ -964,8 +999,9 @@ function Attendance() {
 
         </div>
 
-
-        {/* DAY TYPE */}
+        {/* =================================================
+            DAY TYPE
+            ================================================= */}
 
         <div className="day-type-section">
 
@@ -995,7 +1031,6 @@ function Attendance() {
               📚 Class Day
             </button>
 
-
             <button
               className={
                 dayType ===
@@ -1014,7 +1049,6 @@ function Attendance() {
 
           </div>
 
-
           {dayName ===
             "Sunday" && (
             <small>
@@ -1022,7 +1056,6 @@ function Attendance() {
               holiday.
             </small>
           )}
-
 
           {dayName ===
             "Saturday" && (
@@ -1034,10 +1067,9 @@ function Attendance() {
 
         </div>
 
-
-        {/* ===================================================
+        {/* =================================================
             HOLIDAY
-            =================================================== */}
+            ================================================= */}
 
         {dayType ===
         "holiday" ? (
@@ -1079,7 +1111,10 @@ function Attendance() {
         ) : (
 
           <>
-            {/* SEARCH / QUICK ACTIONS */}
+
+            {/* =================================================
+                SEARCH / QUICK ACTIONS
+                ================================================= */}
 
             <div className="attendance-toolbar">
 
@@ -1102,7 +1137,6 @@ function Attendance() {
 
               </div>
 
-
               <button
                 onClick={() =>
                   markAll(
@@ -1112,7 +1146,6 @@ function Attendance() {
               >
                 ✓ All Present
               </button>
-
 
               <button
                 onClick={() =>
@@ -1124,10 +1157,19 @@ function Attendance() {
                 × All Absent
               </button>
 
+              <button
+                onClick={
+                  markAllNotJoined
+                }
+              >
+                — All Not Joined
+              </button>
+
             </div>
 
-
-            {/* SUMMARY */}
+            {/* =================================================
+                SUMMARY
+                ================================================= */}
 
             <div className="attendance-summary">
 
@@ -1143,7 +1185,6 @@ function Attendance() {
                 </strong>
               </div>
 
-
               <div className="green">
                 <span>
                   Present
@@ -1153,7 +1194,6 @@ function Attendance() {
                   {presentCount}
                 </strong>
               </div>
-
 
               <div className="red">
                 <span>
@@ -1165,7 +1205,6 @@ function Attendance() {
                 </strong>
               </div>
 
-
               <div className="yellow">
                 <span>
                   Late
@@ -1176,6 +1215,15 @@ function Attendance() {
                 </strong>
               </div>
 
+              <div className="gray">
+                <span>
+                  Not Joined
+                </span>
+
+                <strong>
+                  {notJoinedCount}
+                </strong>
+              </div>
 
               <div className="gray">
                 <span>
@@ -1189,8 +1237,9 @@ function Attendance() {
 
             </div>
 
-
-            {/* STUDENT LIST */}
+            {/* =================================================
+                STUDENT LIST
+                ================================================= */}
 
             <div className="attendance-students">
 
@@ -1248,19 +1297,25 @@ function Attendance() {
                         }`}
                       >
 
+                        {/* INDEX */}
+
                         <div className="student-index">
                           {index + 1}
                         </div>
 
+                        {/* AVATAR */}
 
                         <div className="student-avatar">
+
                           {String(
                             studentName
                           )
                             .charAt(0)
                             .toUpperCase()}
+
                         </div>
 
+                        {/* INFO */}
 
                         <div className="student-info">
 
@@ -1275,8 +1330,11 @@ function Attendance() {
 
                         </div>
 
+                        {/* STATUS BUTTONS */}
 
                         <div className="status-buttons">
+
+                          {/* PRESENT */}
 
                           <button
                             className={
@@ -1295,6 +1353,7 @@ function Attendance() {
                             ✓ Present
                           </button>
 
+                          {/* ABSENT */}
 
                           <button
                             className={
@@ -1313,6 +1372,7 @@ function Attendance() {
                             × Absent
                           </button>
 
+                          {/* LATE */}
 
                           <button
                             className={
@@ -1331,8 +1391,28 @@ function Attendance() {
                             ◷ Late
                           </button>
 
+                          {/* NOT JOINED */}
+
+                          <button
+                            className={
+                              status ===
+                              STATUS.NOT_JOINED
+                                ? "active-not-joined"
+                                : ""
+                            }
+                            onClick={() =>
+                              markStudent(
+                                student.id,
+                                STATUS.NOT_JOINED
+                              )
+                            }
+                          >
+                            — Not Joined
+                          </button>
+
                         </div>
 
+                        {/* LATE NOTE */}
 
                         {status ===
                           STATUS.LATE && (
@@ -1364,8 +1444,9 @@ function Attendance() {
           </>
         )}
 
-
-        {/* MESSAGE */}
+        {/* =====================================================
+            MESSAGE
+            ===================================================== */}
 
         {message && (
           <div className="attendance-message">
@@ -1373,8 +1454,9 @@ function Attendance() {
           </div>
         )}
 
-
-        {/* SAVE BUTTON */}
+        {/* =====================================================
+            SAVE BUTTON
+            ===================================================== */}
 
         {dayType ===
           "class" && (
@@ -1395,7 +1477,6 @@ function Attendance() {
 
             </div>
 
-
             <button
               onClick={
                 saveAttendance
@@ -1412,7 +1493,6 @@ function Attendance() {
 
       </section>
 
-
       {/* =====================================================
           HISTORY
           ===================================================== */}
@@ -1422,6 +1502,7 @@ function Attendance() {
         <div className="history-header">
 
           <div>
+
             <h2>
               Attendance Records
             </h2>
@@ -1430,6 +1511,7 @@ function Attendance() {
               Previous attendance and
               holidays
             </p>
+
           </div>
 
           <div className="history-total">
@@ -1437,7 +1519,6 @@ function Attendance() {
           </div>
 
         </div>
-
 
         {Object.keys(
           groupedRecords
@@ -1485,7 +1566,6 @@ function Attendance() {
 
                 </div>
 
-
                 <div className="history-table">
 
                   {monthRecords.map(
@@ -1522,6 +1602,13 @@ function Attendance() {
                             STATUS.LATE
                         ).length;
 
+                      const nj =
+                        statusValues.filter(
+                          (value) =>
+                            value ===
+                            STATUS.NOT_JOINED
+                        ).length;
+
                       return (
                         <div
                           className={`history-row ${
@@ -1552,7 +1639,6 @@ function Attendance() {
 
                           </div>
 
-
                           {/* DEPARTMENT */}
 
                           <div className="history-department">
@@ -1576,17 +1662,18 @@ function Attendance() {
 
                           </div>
 
-
                           {/* STATUS */}
 
                           {isHoliday ? (
 
                             <div className="history-holiday-label">
+
                               <span>
                                 🏖
                               </span>
 
                               HOLIDAY
+
                             </div>
 
                           ) : (
@@ -1614,10 +1701,16 @@ function Attendance() {
                                 </small>
                               </span>
 
+                              <span className="hnj">
+                                — {nj}
+                                <small>
+                                  Not Joined
+                                </small>
+                              </span>
+
                             </div>
 
                           )}
-
 
                           {/* ACTIONS */}
 
@@ -1633,7 +1726,6 @@ function Attendance() {
                             >
                               VIEW →
                             </button>
-
 
                             <button
                               className="history-delete"
