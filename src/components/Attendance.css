@@ -16,7 +16,7 @@
   --line: #dbdfe0;
   --line-soft: #e8ebe9;
 
-  /* accent (steel blue — register / ink stamp feel) */
+  /* accent */
   --accent: #33517c;
   --accent-dark: #253a5c;
   --accent-bg: #e9edf5;
@@ -36,6 +36,7 @@
 
   --gray: #5c6472;
   --gray-bg: #eceef0;
+  --gray-line: #d2d6dc;
 
   /* elevation */
   --shadow-sm: 0 1px 2px rgba(27, 34, 49, 0.06);
@@ -46,14 +47,6 @@
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 16px;
-
-  /* spacing */
-  --s-1: 4px;
-  --s-2: 8px;
-  --s-3: 12px;
-  --s-4: 16px;
-  --s-5: 20px;
-  --s-6: 28px;
 
   /* type */
   --font-display: "Fraunces", "Iowan Old Style", serif;
@@ -80,7 +73,6 @@
   }
 }
 
-/* consistent keyboard focus ring across interactive elements */
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
@@ -91,7 +83,7 @@ a:focus-visible {
 }
 
 /* =========================================================
-   PAGE
+   PAGE & HEADER
 ========================================================= */
 
 .attendance-page {
@@ -110,13 +102,9 @@ a:focus-visible {
     );
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
-
 .attendance-header {
   max-width: 1400px;
-  margin: 0 auto 28px;
+  margin: 0 auto 24px;
 }
 
 .attendance-back {
@@ -149,7 +137,6 @@ a:focus-visible {
   font-size: 13.5px;
 }
 
-/* ledger rule beneath the title */
 .attendance-header::after {
   content: "";
   display: block;
@@ -157,6 +144,63 @@ a:focus-visible {
   margin-top: 16px;
   background: linear-gradient(90deg, var(--ink) 0%, var(--line) 40%, transparent 100%);
   opacity: 0.55;
+}
+
+/* =========================================================
+   NAVIGATION TABS
+========================================================= */
+
+.attendance-tabs {
+  max-width: 1400px;
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.attendance-tab {
+  height: 42px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.attendance-tab:hover {
+  border-color: #c3c9cc;
+  color: var(--ink);
+}
+
+.attendance-tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.attendance-tab span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.attendance-tab.active span {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 /* =========================================================
@@ -226,8 +270,6 @@ a:focus-visible {
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
-/* DAY */
-
 .day-display {
   min-height: 46px;
   display: flex;
@@ -264,7 +306,7 @@ a:focus-visible {
 }
 
 /* =========================================================
-   DAY TYPE
+   DAY TYPE SECTION
 ========================================================= */
 
 .day-type-section {
@@ -292,6 +334,9 @@ a:focus-visible {
 .day-type-buttons button {
   height: 40px;
   padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--paper-raised);
@@ -356,7 +401,7 @@ a:focus-visible {
 
 .holiday-icon {
   font-size: 40px;
-  filter: grayscale(0.15);
+  color: var(--absent);
 }
 
 .holiday-screen h2 {
@@ -383,6 +428,9 @@ a:focus-visible {
 .holiday-screen button {
   height: 42px;
   padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   border: none;
   border-radius: var(--r-md);
   background: var(--absent);
@@ -450,6 +498,9 @@ a:focus-visible {
 .attendance-toolbar > button {
   height: 44px;
   padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--paper-raised);
@@ -472,18 +523,18 @@ a:focus-visible {
 }
 
 /* =========================================================
-   SUMMARY
+   SUMMARY COUNTERS (6 STAT CARDS)
 ========================================================= */
 
 .attendance-summary {
   margin: 16px 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
 }
 
 .attendance-summary > div {
-  padding: 15px;
+  padding: 14px 12px;
   border-radius: var(--r-md);
   border: 1px solid var(--line);
   background: var(--paper-raised);
@@ -506,7 +557,7 @@ a:focus-visible {
   display: block;
   margin-top: 5px;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--ink);
 }
@@ -535,6 +586,10 @@ a:focus-visible {
   color: var(--late);
 }
 
+.attendance-summary .gray {
+  background: var(--gray-bg);
+  border-color: var(--gray-line);
+}
 .attendance-summary .gray strong {
   color: var(--gray);
 }
@@ -594,6 +649,11 @@ a:focus-visible {
   background: var(--late-bg);
 }
 
+.attendance-row.nj {
+  border-color: var(--gray-line);
+  background: var(--gray-bg);
+}
+
 .student-index {
   color: var(--ink-faint);
   font-family: var(--font-display);
@@ -630,7 +690,9 @@ a:focus-visible {
   font-size: 10.5px;
 }
 
-/* STATUS BUTTONS — stamped ink treatment on selection */
+/* =========================================================
+   STATUS BUTTONS
+========================================================= */
 
 .status-buttons {
   display: flex;
@@ -638,8 +700,13 @@ a:focus-visible {
 }
 
 .status-buttons button {
-  min-width: 78px;
+  min-width: 82px;
   height: 36px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border-radius: var(--r-sm);
   border: 1px solid var(--line);
   background: var(--paper-raised);
@@ -679,7 +746,13 @@ a:focus-visible {
   box-shadow: var(--shadow-sm);
 }
 
-/* LATE NOTE */
+.active-not-joined {
+  border-color: var(--gray) !important;
+  background: var(--gray) !important;
+  color: white !important;
+  transform: rotate(-1.5deg) scale(1.03);
+  box-shadow: var(--shadow-sm);
+}
 
 .late-note {
   grid-column: 3 / -1;
@@ -702,7 +775,7 @@ a:focus-visible {
 }
 
 /* =========================================================
-   SAVE BAR
+   SAVE BAR & WHATSAPP ACTION
 ========================================================= */
 
 .attendance-save {
@@ -725,7 +798,43 @@ a:focus-visible {
   font-size: 11.5px;
 }
 
-.attendance-save button {
+.attendance-save-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.whatsapp-share-button {
+  height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #25d366;
+  border-radius: var(--r-md);
+  background: #25d366;
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s var(--ease), background 0.12s var(--ease), opacity 0.12s var(--ease);
+}
+
+.whatsapp-share-button:hover:not(:disabled) {
+  background: #20ba59;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.whatsapp-share-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.attendance-save-actions button:last-child {
   height: 44px;
   padding: 0 24px;
   border: none;
@@ -741,20 +850,20 @@ a:focus-visible {
   transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease), background 0.12s var(--ease);
 }
 
-.attendance-save button:hover:not(:disabled) {
+.attendance-save-actions button:last-child:hover:not(:disabled) {
   background: var(--accent-dark);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
-.attendance-save button:disabled {
+.attendance-save-actions button:last-child:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* =========================================================
-   MESSAGE TOAST
+   MESSAGE
 ========================================================= */
 
 .attendance-message {
@@ -789,6 +898,13 @@ a:focus-visible {
   margin-bottom: 48px;
 }
 
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
 .history-header h2 {
   margin: 0;
   font-family: var(--font-display);
@@ -798,9 +914,19 @@ a:focus-visible {
 }
 
 .history-header p {
-  margin: 5px 0 22px;
+  margin: 5px 0 0;
   color: var(--ink-soft);
   font-size: 11.5px;
+}
+
+.history-total {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 
 .month-group {
@@ -810,12 +936,21 @@ a:focus-visible {
 .month-title {
   margin-bottom: 9px;
   padding-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   border-bottom: 1px solid var(--line);
   color: var(--accent);
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2px;
+}
+
+.month-title small {
+  color: var(--ink-faint);
+  font-family: var(--font-body);
+  font-size: 11px;
 }
 
 .history-table {
@@ -828,15 +963,11 @@ a:focus-visible {
   min-height: 58px;
   padding: 10px 13px;
   display: grid;
-  grid-template-columns: 170px 160px 1fr 80px;
+  grid-template-columns: 140px 160px 1fr 130px;
   align-items: center;
-  gap: 10px;
-  border: none;
+  gap: 12px;
   border-bottom: 1px solid var(--line-soft);
   background: transparent;
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
   transition: background 0.15s var(--ease), padding-left 0.15s var(--ease);
 }
 
@@ -862,16 +993,54 @@ a:focus-visible {
 }
 
 .history-department {
-  font-size: 10.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.department-pill {
+  display: inline-block;
+  width: fit-content;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--ink-soft);
+  letter-spacing: 0.3px;
+}
+
+.department-pill.cs {
+  background: #e8effa;
+  color: #2b5c92;
+}
+
+.department-pill.aids {
+  background: #faede6;
+  color: #9c4b22;
+}
+
+.history-department small {
+  font-size: 10px;
+  color: var(--ink-faint);
 }
 
 .history-counts {
   display: flex;
-  gap: 14px;
-  font-size: 10.5px;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11px;
   font-weight: 700;
+}
+
+.history-counts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.history-counts small {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--ink-faint);
 }
 
 .hp {
@@ -886,23 +1055,66 @@ a:focus-visible {
   color: var(--late);
 }
 
+.hnj {
+  color: var(--gray);
+}
+
 .history-holiday-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--absent);
   font-size: 10.5px;
   font-weight: 700;
 }
 
-.history-view {
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 700;
-  text-align: right;
-  opacity: 0;
-  transition: opacity 0.15s var(--ease);
+.history-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
-.history-row:hover .history-view {
-  opacity: 1;
+.history-view {
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.history-view:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.history-delete {
+  height: 32px;
+  width: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.history-delete:hover {
+  background: var(--absent-bg);
+  border-color: var(--absent-line);
+  color: var(--absent);
 }
 
 .history-holiday {
@@ -917,7 +1129,7 @@ a:focus-visible {
 }
 
 /* =========================================================
-   EMPTY / LOADING
+   EMPTY & LOADING STATES
 ========================================================= */
 
 .attendance-loading {
@@ -925,7 +1137,6 @@ a:focus-visible {
   text-align: center;
   color: var(--ink-faint);
   font-size: 12.5px;
-  position: relative;
 }
 
 .attendance-loading::after {
@@ -971,7 +1182,17 @@ a:focus-visible {
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
+  .attendance-summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .history-row {
+    grid-template-columns: 130px 140px 1fr auto;
+  }
+}
+
+@media (max-width: 900px) {
   .attendance-page {
     padding: 24px 20px;
   }
@@ -984,17 +1205,19 @@ a:focus-visible {
     grid-column: 1 / -1;
   }
 
-  .attendance-summary {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
   .attendance-row {
     grid-template-columns: 24px 42px 1fr;
   }
 
   .status-buttons {
     grid-column: 1 / -1;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .status-buttons button {
+    width: 100%;
+    min-width: 0;
   }
 
   .late-note {
@@ -1002,7 +1225,13 @@ a:focus-visible {
   }
 
   .history-row {
-    grid-template-columns: 130px 100px 1fr 60px;
+    grid-template-columns: 1fr auto;
+    row-gap: 8px;
+  }
+
+  .history-counts,
+  .history-holiday-label {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1014,7 +1243,6 @@ a:focus-visible {
   .attendance-main-card,
   .attendance-history {
     padding: 16px;
-    border-radius: var(--r-lg);
   }
 
   .attendance-header h1 {
@@ -1037,16 +1265,9 @@ a:focus-visible {
     flex-direction: column;
   }
 
-  .attendance-search {
-    width: 100%;
-  }
-
+  .attendance-search,
   .attendance-toolbar > button {
     width: 100%;
-  }
-
-  .attendance-row {
-    grid-template-columns: 24px 42px 1fr;
   }
 
   .student-info {
@@ -1060,14 +1281,7 @@ a:focus-visible {
   }
 
   .status-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-  }
-
-  .status-buttons button {
-    width: 100%;
-    min-width: 0;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .attendance-save {
@@ -1075,35 +1289,19 @@ a:focus-visible {
     align-items: stretch;
   }
 
-  .attendance-save button {
+  .attendance-save-actions {
+    flex-direction: column;
     width: 100%;
   }
 
-  .history-row {
-    grid-template-columns: 1fr auto;
-    padding: 12px 4px;
-  }
-
-  .history-row:hover {
-    padding-left: 4px;
+  .whatsapp-share-button,
+  .attendance-save-actions button:last-child {
+    width: 100%;
+    justify-content: center;
   }
 
   .history-department {
     display: none;
-  }
-
-  .history-counts {
-    grid-column: 1 / -1;
-  }
-
-  .history-view {
-    grid-column: 2;
-    grid-row: 1;
-    opacity: 1;
-  }
-
-  .history-holiday-label {
-    grid-column: 1 / -1;
   }
 }
 
@@ -1118,10 +1316,12 @@ a:focus-visible {
   }
 
   .attendance-back,
+  .attendance-tabs,
   .day-type-section,
   .attendance-toolbar,
   .attendance-save,
-  .status-buttons {
+  .status-buttons,
+  .history-actions {
     display: none !important;
   }
 
