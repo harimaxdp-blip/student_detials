@@ -66,10 +66,6 @@ function Attendance() {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState("attendance");
 
-  // =========================================================
-  // DATE HELPERS
-  // =========================================================
-
   const getDateObject = (value) => {
     if (!value) return new Date();
     return new Date(`${value}T00:00:00`);
@@ -83,19 +79,11 @@ function Attendance() {
 
   const dayName = getDayName(date);
 
-  // =========================================================
-  // SUNDAY
-  // =========================================================
-
   useEffect(() => {
     if (dayName === "Sunday") {
       setDayType("holiday");
     }
   }, [dayName]);
-
-  // =========================================================
-  // LOAD STUDENTS
-  // =========================================================
 
   useEffect(() => {
     const studentsRef = collection(db, "students");
@@ -119,10 +107,6 @@ function Attendance() {
 
     return () => unsubscribe();
   }, []);
-
-  // =========================================================
-  // LOAD ATTENDANCE HISTORY
-  // =========================================================
 
   useEffect(() => {
     const attendanceRef = collection(db, "attendance");
@@ -151,12 +135,17 @@ function Attendance() {
   }, []);
 
   // =========================================================
-  // FILTER STUDENTS BY DEPARTMENT
+  // FILTER STUDENTS BY DEPARTMENT & EXCLUDE HYBRID / HOME STUDENTS
   // =========================================================
 
   const departmentStudents = useMemo(() => {
     return students
       .filter((student) => {
+        // Exclude students who are hybrid / studying from home
+        const isHybrid =
+          student.studyMode === "hybrid" || student.isHybrid === true;
+        if (isHybrid) return false;
+
         const value = String(
           student.department || student.course || ""
         )
@@ -190,10 +179,6 @@ function Attendance() {
       );
   }, [students, department]);
 
-  // =========================================================
-  // SEARCH
-  // =========================================================
-
   const filteredStudents = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -224,10 +209,6 @@ function Attendance() {
       );
     });
   }, [departmentStudents, search]);
-
-  // =========================================================
-  // LOAD SELECTED DATE RECORD
-  // =========================================================
 
   const loadRecord = async () => {
     if (!date || !department) return;
@@ -276,10 +257,6 @@ function Attendance() {
     loadRecord();
   }, [date, department, departmentStudents.length]);
 
-  // =========================================================
-  // DATE CHANGE
-  // =========================================================
-
   const changeDate = (value) => {
     setDate(value);
     const selectedDate = getDateObject(value);
@@ -296,10 +273,6 @@ function Attendance() {
     setMessage("");
   };
 
-  // =========================================================
-  // DEPARTMENT CHANGE
-  // =========================================================
-
   const changeDepartment = (value) => {
     setDepartment(value);
     setAttendance({});
@@ -307,10 +280,6 @@ function Attendance() {
     setSearch("");
     setMessage("");
   };
-
-  // =========================================================
-  // SET DAY TYPE
-  // =========================================================
 
   const changeDayType = (type) => {
     if (dayName === "Sunday") {
@@ -326,20 +295,12 @@ function Attendance() {
     }
   };
 
-  // =========================================================
-  // MARK STUDENT
-  // =========================================================
-
   const markStudent = (studentId, status) => {
     setAttendance((previous) => ({
       ...previous,
       [studentId]: status,
     }));
   };
-
-  // =========================================================
-  // MARK ALL
-  // =========================================================
 
   const markAll = (status) => {
     const newAttendance = {};
@@ -353,10 +314,6 @@ function Attendance() {
     }));
   };
 
-  // =========================================================
-  // MARK ALL NOT JOINED
-  // =========================================================
-
   const markAllNotJoined = () => {
     const newAttendance = {};
     filteredStudents.forEach((student) => {
@@ -369,20 +326,12 @@ function Attendance() {
     }));
   };
 
-  // =========================================================
-  // LATE NOTE
-  // =========================================================
-
   const updateLateNote = (studentId, value) => {
     setLateNotes((previous) => ({
       ...previous,
       [studentId]: value,
     }));
   };
-
-  // =========================================================
-  // SAVE HOLIDAY
-  // =========================================================
 
   const saveHoliday = async () => {
     if (!date || !department) {
@@ -416,10 +365,6 @@ function Attendance() {
 
     setSaving(false);
   };
-
-  // =========================================================
-  // SAVE / UPDATE ATTENDANCE
-  // =========================================================
 
   const saveAttendance = async () => {
     if (!date) {
@@ -479,10 +424,6 @@ function Attendance() {
     setSaving(false);
   };
 
-  // =========================================================
-  // DELETE RECORD
-  // =========================================================
-
   const deleteRecord = async (record) => {
     const departmentName = record.dep === "cs" ? "CS" : "AIDS";
     const isHoliday = record.t === "holiday";
@@ -518,10 +459,6 @@ function Attendance() {
     }
   };
 
-  // =========================================================
-  // OPEN PREVIOUS RECORD
-  // =========================================================
-
   const openRecord = (record) => {
     setDate(record.d);
     setDepartment(record.dep);
@@ -539,10 +476,6 @@ function Attendance() {
       behavior: "smooth",
     });
   };
-
-  // =========================================================
-  // GROUP RECORDS BY MONTH
-  // =========================================================
 
   const groupedRecords = useMemo(() => {
     const groups = {};
@@ -568,10 +501,6 @@ function Attendance() {
     return groups;
   }, [records]);
 
-  // =========================================================
-  // COUNTS
-  // =========================================================
-
   const presentCount = filteredStudents.filter(
     (student) => attendance[student.id] === STATUS.PRESENT
   ).length;
@@ -594,10 +523,6 @@ function Attendance() {
     absentCount -
     lateCount -
     notJoinedCount;
-
-  // =========================================================
-  // WHATSAPP SHARE
-  // =========================================================
 
   const shareAttendanceToWhatsApp = () => {
     const departmentName = getDepartmentName(department).toUpperCase();
@@ -670,10 +595,6 @@ function Attendance() {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
-  // =========================================================
-  // DATE FORMAT
-  // =========================================================
-
   const formatDate = (value) => {
     return getDateObject(value).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -692,13 +613,8 @@ function Attendance() {
     return DEPARTMENTS.find((item) => item.id === id)?.name || id;
   };
 
-  // =========================================================
-  // RENDER
-  // =========================================================
-
   return (
     <div className="attendance-page">
-      {/* HEADER */}
       <header className="attendance-header">
         <div>
           <Link to="/d" className="attendance-back">
@@ -711,7 +627,6 @@ function Attendance() {
         </div>
       </header>
 
-      {/* ATTENDANCE TABS */}
       <div className="attendance-tabs">
         <button
           type="button"
@@ -739,7 +654,6 @@ function Attendance() {
         </button>
       </div>
 
-      {/* CURRENT ATTENDANCE */}
       {activeTab === "attendance" && (
         <section className="attendance-main-card">
           <div className="attendance-top">
@@ -1069,7 +983,6 @@ function Attendance() {
         </section>
       )}
 
-      {/* HISTORY */}
       {activeTab === "history" && (
         <section className="attendance-history">
           <div className="history-header">

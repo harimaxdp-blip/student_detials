@@ -25,7 +25,6 @@ import {
   Users,
   User,
   Phone,
-  Mail,
   CheckCircle2,
   AlertTriangle,
   GraduationCap,
@@ -35,6 +34,7 @@ import {
   Save,
   HeartHandshake,
   Percent,
+  Home,
 } from "lucide-react";
 
 const STATUS = {
@@ -181,7 +181,6 @@ function StudentDetails() {
   // =========================================================
 
   const computedAttendance = useMemo(() => {
-    // Only class sessions count as working days
     const classRecords = attendanceRecords.filter((record) => {
       const type = String(record.t || "").toLowerCase();
       return type === "c" || type === "class";
@@ -202,10 +201,7 @@ function StudentDetails() {
         const recordDate = getDateString(record.d);
         if (!recordDate) return;
 
-        // Skip records before student joined
         if (joiningDate && recordDate < joiningDate) return;
-
-        // Department must match
         if (dep && record.dep !== dep) return;
 
         workingDays++;
@@ -217,7 +213,6 @@ function StudentDetails() {
           lateDays++;
           presentDays++;
         } else {
-          // If marked 'p' or legacy records with no explicit 'a'
           presentDays++;
         }
       });
@@ -236,10 +231,6 @@ function StudentDetails() {
 
     return stats;
   }, [students, attendanceRecords]);
-
-  // =========================================================
-  // FORMAT DATE
-  // =========================================================
 
   const formatDate = (value) => {
     if (!value) return "—";
@@ -264,10 +255,6 @@ function StudentDetails() {
     }
   };
 
-  // =========================================================
-  // AVAILABLE COURSES
-  // =========================================================
-
   const courses = useMemo(() => {
     return [
       ...new Set(
@@ -277,10 +264,6 @@ function StudentDetails() {
       ),
     ].sort();
   }, [students]);
-
-  // =========================================================
-  // SEARCH + FILTER + SORT BY COMPUTED TOTAL PERCENTAGE
-  // =========================================================
 
   const filteredStudents = useMemo(() => {
     const searchText = search.trim().toLowerCase();
@@ -332,22 +315,15 @@ function StudentDetails() {
     attendanceOrder,
   ]);
 
-  // =========================================================
-  // TOGGLE DETAILS
-  // =========================================================
-
   const toggleStudent = (studentId) => {
     setOpenId((currentId) => (currentId === studentId ? null : studentId));
   };
-
-  // =========================================================
-  // EDIT
-  // =========================================================
 
   const startEdit = (student) => {
     setEditingStudent({
       ...student,
       joiningDate: getJoiningDate(student),
+      studyMode: student.studyMode || (student.isHybrid ? "hybrid" : "regular"),
     });
   };
 
@@ -385,6 +361,8 @@ function StudentDetails() {
         guardianMobile: editingStudent.guardianMobile?.trim() || "",
         course: editingStudent.course || "",
         joiningDate: editingStudent.joiningDate || "",
+        studyMode: editingStudent.studyMode || "regular",
+        isHybrid: editingStudent.studyMode === "hybrid",
 
         updatedAt: serverTimestamp(),
       });
@@ -398,10 +376,6 @@ function StudentDetails() {
       setSaving(false);
     }
   };
-
-  // =========================================================
-  // DELETE
-  // =========================================================
 
   const deleteStudent = async (student) => {
     const confirmed = window.confirm(
@@ -423,10 +397,6 @@ function StudentDetails() {
       alert(`Unable to delete student.\n\n${error.code || error.message}`);
     }
   };
-
-  // =========================================================
-  // RESET FILTERS
-  // =========================================================
 
   const resetFilters = () => {
     setSearch("");
@@ -461,7 +431,6 @@ function StudentDetails() {
 
       {/* FILTER TOOLBAR */}
       <div className="details-toolbar">
-        {/* SEARCH */}
         <div className="search-box">
           <span className="search-icon">
             <Search size={18} />
@@ -487,9 +456,7 @@ function StudentDetails() {
           )}
         </div>
 
-        {/* FILTERS */}
         <div className="filter-row">
-          {/* GENDER */}
           <select
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
@@ -500,7 +467,6 @@ function StudentDetails() {
             <option value="Other">Other</option>
           </select>
 
-          {/* COURSE / DEPARTMENT */}
           <select
             value={courseFilter}
             onChange={(e) => setCourseFilter(e.target.value)}
@@ -513,7 +479,6 @@ function StudentDetails() {
             ))}
           </select>
 
-          {/* ATTENDANCE */}
           <select
             value={attendanceOrder}
             onChange={(e) => setAttendanceOrder(e.target.value)}
@@ -523,7 +488,6 @@ function StudentDetails() {
             <option value="low">Attendance: Low → High</option>
           </select>
 
-          {/* RESET */}
           {(search ||
             genderFilter !== "all" ||
             courseFilter !== "all" ||
@@ -537,7 +501,6 @@ function StudentDetails() {
             </button>
           )}
 
-          {/* RESULT COUNT */}
           <div className="filter-result">
             Showing <strong>{filteredStudents.length}</strong> of{" "}
             <strong>{students.length}</strong> students
@@ -547,7 +510,6 @@ function StudentDetails() {
 
       {/* MAIN */}
       <main className="details-body">
-        {/* LOADING */}
         {loading && (
           <div className="details-state">
             <Loader2 size={20} className="spin-icon" />
@@ -555,7 +517,6 @@ function StudentDetails() {
           </div>
         )}
 
-        {/* ERROR */}
         {!loading && loadError && (
           <div className="details-state details-error">
             <AlertTriangle size={18} />
@@ -563,7 +524,6 @@ function StudentDetails() {
           </div>
         )}
 
-        {/* EMPTY */}
         {!loading && !loadError && filteredStudents.length === 0 && (
           <div className="empty-state">
             <div className="empty-icon">
@@ -577,13 +537,13 @@ function StudentDetails() {
           </div>
         )}
 
-        {/* STUDENTS LIST */}
         {!loading && !loadError && filteredStudents.length > 0 && (
           <div className="details-grid">
             {filteredStudents.map((student) => {
               const isOpen = openId === student.id;
+              const isHybrid =
+                student.studyMode === "hybrid" || student.isHybrid === true;
 
-              // Live cumulative attendance from start to now
               const stat = computedAttendance[student.id] || {
                 workingDays: 0,
                 presentDays: 0,
@@ -600,13 +560,24 @@ function StudentDetails() {
                   key={student.id}
                   className={`student-card ${isOpen ? "expanded" : ""}`}
                 >
-                  {/* CARD HEADER */}
                   <div className="student-card-top">
                     <div className="student-card-heading">
                       <div className="student-name-row">
                         <h2>{student.fullName || "Unnamed student"}</h2>
 
-                        {/* LIVE CLOUD ATTENDANCE BADGE */}
+                        {isHybrid && (
+                          <span
+                            className="attendance-badge"
+                            style={{
+                              background: "#e0f2fe",
+                              color: "#0369a1",
+                              borderColor: "#bae6fd",
+                            }}
+                          >
+                            <Home size={12} /> Hybrid (Home)
+                          </span>
+                        )}
+
                         <span
                           className={`attendance-badge ${
                             isLow ? "attendance-low" : "attendance-good"
@@ -663,11 +634,15 @@ function StudentDetails() {
                     </div>
                   </div>
 
-                  {/* SUMMARY STRIP */}
                   <dl className="student-summary">
                     <div>
                       <dt>Mobile</dt>
                       <dd>{student.studentMobile || "—"}</dd>
+                    </div>
+
+                    <div>
+                      <dt>Mode</dt>
+                      <dd>{isHybrid ? "Hybrid (Home)" : "Regular (In-person)"}</dd>
                     </div>
 
                     <div>
@@ -681,17 +656,10 @@ function StudentDetails() {
                         {stat.presentDays}P · {stat.absentDays}A
                       </dd>
                     </div>
-
-                    <div>
-                      <dt>Submitted</dt>
-                      <dd>{formatDate(student.createdAt)}</dd>
-                    </div>
                   </dl>
 
-                  {/* FULL DETAILS ACCORDION */}
                   {isOpen && (
                     <div className="student-full">
-                      {/* PERSONAL */}
                       <section>
                         <h3>
                           <User size={15} /> Personal
@@ -710,6 +678,10 @@ function StudentDetails() {
                             <dd>{student.bloodGroup || "—"}</dd>
                           </div>
                           <div>
+                            <dt>Study Mode</dt>
+                            <dd>{isHybrid ? "Hybrid (From Home)" : "Regular (In-person)"}</dd>
+                          </div>
+                          <div>
                             <dt>Joined On</dt>
                             <dd>
                               {student.joiningDate
@@ -720,7 +692,6 @@ function StudentDetails() {
                         </dl>
                       </section>
 
-                      {/* CONTACT */}
                       <section>
                         <h3>
                           <Phone size={15} /> Contact
@@ -745,7 +716,6 @@ function StudentDetails() {
                         </dl>
                       </section>
 
-                      {/* PARENT */}
                       <section>
                         <h3>
                           <HeartHandshake size={15} /> Parent / Guardian
@@ -786,7 +756,6 @@ function StudentDetails() {
                         </dl>
                       </section>
 
-                      {/* TOTAL ATTENDANCE BREAKDOWN */}
                       <section>
                         <h3>
                           <Percent size={15} /> Overall Cloud Attendance
@@ -817,7 +786,6 @@ function StudentDetails() {
                         </dl>
                       </section>
 
-                      {/* RECORD */}
                       <section>
                         <h3>
                           <Layers size={15} /> Record Details
@@ -876,7 +844,6 @@ function StudentDetails() {
             </div>
 
             <div className="edit-form">
-              {/* NAME */}
               <div className="edit-field wide">
                 <label>Full Name</label>
                 <input
@@ -886,7 +853,36 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* DOB */}
+              {/* STUDY MODE (REGULAR VS HYBRID) */}
+              <div className="edit-field">
+                <label>Study Mode / Location</label>
+                <select
+                  name="studyMode"
+                  value={editingStudent.studyMode || "regular"}
+                  onChange={handleEditChange}
+                >
+                  <option value="regular">Regular (In-Person / Physical)</option>
+                  <option value="hybrid">Hybrid (Study from Home)</option>
+                </select>
+              </div>
+
+              <div className="edit-field">
+                <label>Department / Course</label>
+                <select
+                  name="course"
+                  value={editingStudent.course || ""}
+                  onChange={handleEditChange}
+                >
+                  <option value="">Select course</option>
+                  <option value="B.Sc. Computer Science">
+                    B.Sc. Computer Science
+                  </option>
+                  <option value="B.Sc. Artificial Intelligence & Data Science">
+                    B.Sc. Artificial Intelligence & Data Science
+                  </option>
+                </select>
+              </div>
+
               <div className="edit-field">
                 <label>Date of Birth</label>
                 <input
@@ -897,7 +893,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* JOINING DATE */}
               <div className="edit-field">
                 <label>Date of Joining</label>
                 <input
@@ -908,7 +903,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* GENDER */}
               <div className="edit-field">
                 <label>Gender</label>
                 <select
@@ -923,7 +917,6 @@ function StudentDetails() {
                 </select>
               </div>
 
-              {/* BLOOD GROUP */}
               <div className="edit-field">
                 <label>Blood Group</label>
                 <select
@@ -943,7 +936,6 @@ function StudentDetails() {
                 </select>
               </div>
 
-              {/* MOBILE */}
               <div className="edit-field">
                 <label>Student Mobile</label>
                 <input
@@ -953,7 +945,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* EMAIL */}
               <div className="edit-field">
                 <label>Email</label>
                 <input
@@ -964,7 +955,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* ADDRESS */}
               <div className="edit-field wide">
                 <label>Address</label>
                 <textarea
@@ -975,7 +965,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* PINCODE */}
               <div className="edit-field">
                 <label>Pincode</label>
                 <input
@@ -985,25 +974,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* COURSE */}
-              <div className="edit-field">
-                <label>Department / Course</label>
-                <select
-                  name="course"
-                  value={editingStudent.course || ""}
-                  onChange={handleEditChange}
-                >
-                  <option value="">Select course</option>
-                  <option value="B.Sc. Computer Science">
-                    B.Sc. Computer Science
-                  </option>
-                  <option value="B.Sc. Artificial Intelligence & Data Science">
-                    B.Sc. Artificial Intelligence & Data Science
-                  </option>
-                </select>
-              </div>
-
-              {/* FATHER */}
               <div className="edit-field">
                 <label>Father's Name</label>
                 <input
@@ -1022,7 +992,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* MOTHER */}
               <div className="edit-field">
                 <label>Mother's Name</label>
                 <input
@@ -1041,7 +1010,6 @@ function StudentDetails() {
                 />
               </div>
 
-              {/* GUARDIAN */}
               <div className="edit-field">
                 <label>Guardian Name</label>
                 <input
@@ -1061,7 +1029,6 @@ function StudentDetails() {
               </div>
             </div>
 
-            {/* MODAL FOOTER */}
             <div className="edit-modal-footer">
               <button
                 type="button"
