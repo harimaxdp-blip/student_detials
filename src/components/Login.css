@@ -1,206 +1,2055 @@
+/* =========================================================
+   MATIONATONCE — PREMIUM LOGIN / ROLE SELECTION
+   Mobile-first • Neon Glass • 2026 UI
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg: #020714;
+  --bg-soft: #071126;
+
+  --text: #f8fbff;
+  --muted: #8c9ab8;
+
+  --blue: #168cff;
+  --cyan: #00d9ff;
+
+  --purple: #8b3dff;
+  --pink: #d832ff;
+
+  --staff: #00aaff;
+  --student: #9b45ff;
+
+  --glass: rgba(10, 19, 43, 0.72);
+  --border: rgba(255, 255, 255, 0.10);
+
+  --shadow:
+    0 25px 70px rgba(0, 0, 0, 0.55),
+    0 0 45px rgba(31, 111, 255, 0.10);
+
+  font-family: "Inter", sans-serif;
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
+
+
+/* =========================================================
+   MAIN PORTAL
+   ========================================================= */
+
+.portal-wrapper {
+  position: relative;
+
+  min-height: 100svh;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding:
+    max(24px, env(safe-area-inset-top))
+    18px
+    max(28px, env(safe-area-inset-bottom));
+
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(28, 85, 190, 0.22),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 10% 75%,
+      rgba(0, 123, 255, 0.10),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 72%,
+      rgba(138, 41, 255, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #020612 0%,
+      #03091b 55%,
+      #020512 100%
+    );
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   BACKGROUND ATMOSPHERE
+   ========================================================= */
+
+.portal-wrapper::before,
+.portal-wrapper::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+.portal-wrapper::before {
+  width: 240px;
+  height: 240px;
+
+  top: 28%;
+  left: -140px;
+
+  background: #006eff;
+
+  animation: ambientFloat 8s ease-in-out infinite;
+}
+
+.portal-wrapper::after {
+  width: 220px;
+  height: 220px;
+
+  right: -120px;
+  bottom: 20%;
+
+  background: #8d20ff;
+
+  animation: ambientFloat 10s ease-in-out infinite reverse;
+}
+
+@keyframes ambientFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(20px, -25px, 0);
+  }
+}
+
+
+/* =========================================================
+   PARTICLES
+   ========================================================= */
+
+.portal-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  left: calc(var(--i) * 7.2%);
+  top: 100%;
+  background: rgba(120, 170, 255, 0.55);
+  box-shadow: 0 0 6px rgba(90, 160, 255, 0.6);
+  animation: particleRise calc(9s + (var(--i) * 0.6s)) linear infinite;
+  animation-delay: calc(var(--i) * -0.8s);
+}
+
+@keyframes particleRise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  90% {
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: translateY(-115vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   SKYLINE / BACKGROUND DECORATION
+   ========================================================= */
+
+.portal-skyline {
+  position: absolute;
+  inset: auto 0 0;
+
+  height: 150px;
+
+  opacity: 0.18;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(5, 16, 40, 0.95),
+      transparent
+    );
+
+  mask-image:
+    linear-gradient(to top, black, transparent);
+
+  -webkit-mask-image:
+    linear-gradient(to top, black, transparent);
+}
+
+.portal-skyline::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 80px;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      rgba(38, 109, 255, 0.12) 23px 25px,
+      transparent 26px 60px
+    );
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.portal-brand {
+  position: relative;
+  z-index: 3;
+
+  text-align: center;
+
+  padding-top: 4px;
+  margin-bottom: 30px;
+
+  animation: brandEnter 0.8s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes brandEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-logo {
+  width: 54px;
+  height: 54px;
+
+  margin: 0 auto 9px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 17px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      145deg,
+      #00baff,
+      #4e43ff 55%,
+      #a62cff
+    );
+
+  box-shadow:
+    0 10px 30px rgba(40, 100, 255, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.30);
+
+  transform: rotate(-2deg);
+
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 30px rgba(40, 100, 255, 0.30),
+      0 0 0 rgba(0, 191, 255, 0);
+  }
+
+  50% {
+    box-shadow:
+      0 10px 35px rgba(40, 100, 255, 0.50),
+      0 0 30px rgba(111, 61, 255, 0.22);
+  }
+}
+
+.portal-brand h2 {
+  font-size: 25px;
+  line-height: 1;
+
+  font-weight: 800;
+  letter-spacing: -1.1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff 15%,
+      #bfcaff 50%,
+      #9a55ff 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+.portal-tagline {
+  margin-top: 6px;
+
+  color: #7785a7;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   HERO HEADING (currently unused by the JSX, kept for reuse)
+   ========================================================= */
+
+.portal-headline {
+  position: relative;
+  z-index: 2;
+
+  margin-top: 38px;
+  margin-bottom: 24px;
+
+  animation:
+    headlineEnter 0.9s 0.1s both
+    cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes headlineEnter {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-headline h1 {
+  font-size: clamp(37px, 10vw, 62px);
+
+  line-height: 0.98;
+
+  font-weight: 800;
+
+  letter-spacing: -2.6px;
+
+  color: #f5f8ff;
+}
+
+.portal-headline h1 span {
+  display: inline-block;
+
+  background:
+    linear-gradient(
+      90deg,
+      #168dff,
+      #5d57ff 48%,
+      #d032ff
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+
+  text-shadow:
+    0 0 35px rgba(73, 95, 255, 0.20);
+}
+
+.portal-headline p {
+  margin-top: 13px;
+
+  color: #8190b1;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  letter-spacing: 0.1px;
+}
+
+.portal-headline::after {
+  content: "";
+
+  display: block;
+
+  width: 78px;
+  height: 3px;
+
+  margin-top: 17px;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00c6ff,
+      #6a42ff,
+      #d62cff
+    );
+
+  box-shadow:
+    0 0 14px rgba(42, 139, 255, 0.5);
+}
+
+
+/* =========================================================
+   ROLE CARDS CONTAINER
+   ========================================================= */
+
+.role-cards-container {
+  position: relative;
+  z-index: 3;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+
+  width: 100%;
+
+  margin: auto 0;
+
+  perspective: 1200px;
+
+  animation:
+    cardsEnter 1s 0.18s both
+    cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes cardsEnter {
+  from {
+    opacity: 0;
+    transform:
+      translateY(40px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   ROLE CARD
+   ========================================================= */
+
+.role-card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border-radius: 21px;
+
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 28, 62, 0.82),
+      rgba(5, 12, 34, 0.94)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  transform:
+    translateZ(0);
+
+  transition:
+    transform 0.55s cubic-bezier(.16,1,.3,1),
+    box-shadow 0.55s ease,
+    border-color 0.4s ease;
+}
+
+.role-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+
+/* Shine layer */
+
+.role-card::before {
+  content: "";
+
+  position: absolute;
+
+  z-index: 10;
+
+  top: -150%;
+  left: -80%;
+
+  width: 55%;
+  height: 300%;
+
+  pointer-events: none;
+
+  transform: rotate(25deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,0.16),
+      transparent
+    );
+
+  transition: left 0.8s ease;
+}
+
+.role-card:hover::before,
+.role-card:focus-visible::before {
+  left: 160%;
+}
+
+
+/* Card hover */
+
+.role-card:hover {
+  transform:
+    translateY(-9px)
+    rotateX(2deg)
+    scale(1.015);
+
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(30, 130, 255, 0.18);
+}
+
+
+/* Active / touch */
+
+.role-card:active {
+  transform:
+    translateY(-2px)
+    scale(0.975);
+
+  transition-duration: 0.12s;
+}
+
+
+/* =========================================================
+   STAFF CARD
+   ========================================================= */
+
+.role-card--staff {
+  border-color:
+    rgba(0, 174, 255, 0.32);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(0, 155, 255, 0.12),
+    inset 0 0 25px rgba(0, 155, 255, 0.04);
+}
+
+.role-card--staff:hover {
+  border-color:
+    rgba(0, 195, 255, 0.75);
+
+  box-shadow:
+    0 30px 65px rgba(0, 0, 0, 0.55),
+    0 0 45px rgba(0, 170, 255, 0.25);
+}
+
+
+/* =========================================================
+   STUDENT CARD
+   ========================================================= */
+
+.role-card--student {
+  border-color:
+    rgba(153, 72, 255, 0.32);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(141, 55, 255, 0.12),
+    inset 0 0 25px rgba(141, 55, 255, 0.04);
+}
+
+.role-card--student:hover {
+  border-color:
+    rgba(185, 87, 255, 0.75);
+
+  box-shadow:
+    0 30px 65px rgba(0, 0, 0, 0.55),
+    0 0 45px rgba(157, 61, 255, 0.28);
+}
+
+
+/* =========================================================
+   ROLE IMAGE
+   — FIX: previously the <img> was pinned to a fixed
+   380x500px box regardless of the card's real width, so on
+   phones (where the card is much narrower) only a random
+   cropped fragment of the image was visible. Now the image
+   fills its parent (which is sized by aspect-ratio below),
+   so it scales correctly at every breakpoint.
+   ========================================================= */
+
+.role-card-media {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 0.79;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #11245b,
+      #030816
+    );
+}
+
+.role-card-media::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 45%,
+      rgba(2, 6, 20, 0.15) 65%,
+      rgba(3, 7, 20, 0.95) 100%
+    );
+
+  pointer-events: none;
+}
+
+.role-card-media img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  /* keep faces/heads in frame instead of centering blindly */
+  object-position: center top;
+
+  transform:
+    scale(1.01);
+
+  transition:
+    transform 0.9s cubic-bezier(.16,1,.3,1),
+    filter 0.5s ease;
+}
+
+.role-card:hover .role-card-media img {
+  transform:
+    scale(1.08);
+
+  filter:
+    saturate(1.12)
+    brightness(1.08);
+}
+
+
+/* fallback (shown only if the image itself fails to load) */
+
+.role-card-art-fallback {
+  position: absolute;
+
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: white;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.role-card-media img:not([src]),
+.role-card-media img::before {
+  opacity: 0;
+}
+
+
+/* =========================================================
+   ROLE CONTENT
+   ========================================================= */
+
+.role-card-content {
+  position: relative;
+
+  z-index: 5;
+
+  min-height: 153px;
+
+  margin-top: -22px;
+
+  padding:
+    14px
+    12px
+    16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(6, 13, 36, 0.90),
+      rgba(3, 7, 23, 0.99)
+    );
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 24px 24px 0 0;
+}
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+.role-badge {
+  width: 43px;
+  height: 43px;
+
+  margin-top: -31px;
+  margin-bottom: 10px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  color: white;
+
+  border: 1px solid rgba(255,255,255,0.14);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.45s cubic-bezier(.16,1,.3,1),
+    box-shadow 0.45s ease;
+}
+
+.role-card--staff .role-badge {
+  background:
+    linear-gradient(
+      145deg,
+      #00bfff,
+      #156eff
+    );
+
+  box-shadow:
+    0 0 25px rgba(0, 174, 255, 0.32);
+}
+
+.role-card--student .role-badge {
+  background:
+    linear-gradient(
+      145deg,
+      #7045ff,
+      #c12fff
+    );
+
+  box-shadow:
+    0 0 25px rgba(161, 55, 255, 0.32);
+}
+
+.role-card:hover .role-badge {
+  transform:
+    translateY(-4px)
+    rotate(-5deg)
+    scale(1.08);
+}
+
+
+/* =========================================================
+   ROLE TEXT
+   ========================================================= */
+
+.role-card-content h3 {
+  font-size: 15px;
+
+  line-height: 1.2;
+
+  font-weight: 750;
+
+  color: #ffffff;
+
+  letter-spacing: -0.25px;
+}
+
+.role-card-content p {
+  margin-top: 8px;
+
+  min-height: 35px;
+
+  color: #8795b6;
+
+  font-size: 9.5px;
+
+  line-height: 1.5;
+
+  letter-spacing: 0.05px;
+}
+
+
+/* =========================================================
+   CTA BUTTON
+   ========================================================= */
+
+.role-cta-btn {
+  position: relative;
+
+  width: 37px;
+  height: 37px;
+
+  margin-top: 13px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.45s cubic-bezier(.16,1,.3,1),
+    box-shadow 0.45s ease,
+    filter 0.35s ease;
+}
+
+.role-card--staff .role-cta-btn {
+  background:
+    linear-gradient(
+      145deg,
+      #00caff,
+      #126fff
+    );
+
+  box-shadow:
+    0 0 20px rgba(0, 177, 255, 0.45);
+}
+
+.role-card--student .role-cta-btn {
+  background:
+    linear-gradient(
+      145deg,
+      #714dff,
+      #c128ff
+    );
+
+  box-shadow:
+    0 0 20px rgba(165, 55, 255, 0.45);
+}
+
+.role-card:hover .role-cta-btn {
+  transform:
+    translateX(5px)
+    scale(1.12);
+
+  filter: brightness(1.15);
+}
+
+
+/* Arrow animation */
+
+.role-cta-btn svg {
+  transition:
+    transform 0.4s cubic-bezier(.16,1,.3,1);
+}
+
+.role-card:hover .role-cta-btn svg {
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.portal-footer {
+  position: relative;
+  z-index: 3;
+
+  margin-top: 26px;
+
+  text-align: center;
+
+  animation:
+    footerEnter 1s 0.4s both;
+}
+
+@keyframes footerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-quote {
+  color: #667594;
+
+  font-size: 10px;
+  font-style: italic;
+
+  letter-spacing: 0.8px;
+}
+
+
+/* =========================================================
+   SLIDER DOTS
+   ========================================================= */
+
+.portal-slider-dots {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 12px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #243250;
+
+  transition:
+    width 0.4s ease,
+    background 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.dot-active {
+  width: 25px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00c7ff,
+      #7a42ff
+    );
+
+  box-shadow:
+    0 0 12px rgba(0, 181, 255, 0.35);
+}
+
+
+/* =========================================================
+   LOGIN FORM SCREEN
+   ========================================================= */
+
 .login-wrapper {
-  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
-  padding: 1.5rem;
-  font-family: inherit;
+
+  padding:
+    24px
+    18px;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(0, 136, 255, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(155, 40, 255, 0.18),
+      transparent 35%
+    ),
+    #020613;
 }
 
+
+/* =========================================================
+   LOGIN CARD
+   ========================================================= */
+
 .login-card {
+  position: relative;
+
   width: 100%;
-  max-width: 440px;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-  padding: 2.5rem;
+  max-width: 470px;
+
+  padding: 26px 20px 22px;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14, 28, 61, 0.90),
+      rgba(4, 10, 28, 0.96)
+    );
+
+  border: 1px solid rgba(255,255,255,0.10);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 50px rgba(39,100,255,0.10);
+
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  animation:
+    loginCardEnter 0.7s cubic-bezier(.16,1,.3,1);
 }
+
+@keyframes loginCardEnter {
+  from {
+    opacity: 0;
+    transform:
+      translateY(30px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================================
+   BACK BUTTON
+   ========================================================= */
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 11px;
+
+  color: #8fa2c8;
+
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.07);
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition:
+    color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+.back-btn:hover {
+  color: white;
+
+  background: rgba(255,255,255,0.09);
+
+  transform: translateX(-3px);
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   LOGIN HEADER
+   ========================================================= */
 
 .login-header {
   text-align: center;
-  margin-bottom: 2rem;
+
+  margin-top: 27px;
+  margin-bottom: 25px;
 }
 
 .portal-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 1rem;
-  background: #eff6ff;
-  color: #2563eb;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 14px;
+
+  display: grid;
+  place-items: center;
+
+  color: white;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #0caeff,
+      #6744ff 55%,
+      #b92eff
+    );
+
+  box-shadow:
+    0 15px 35px rgba(58, 87, 255, 0.30);
 }
 
 .login-header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
+  font-size: 24px;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.8px;
 }
 
 .login-header p {
-  font-size: 0.875rem;
-  color: #64748b;
-  line-height: 1.4;
+  margin-top: 9px;
+
+  color: #8290ae;
+
+  font-size: 12px;
+
+  line-height: 1.5;
 }
 
-.role-switch {
-  display: flex;
-  background: #f1f5f9;
-  padding: 4px;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  gap: 4px;
-}
 
-.role-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0.6rem 0.8rem;
-  border: none;
-  background: transparent;
-  color: #64748b;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.role-btn.active {
-  background: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+/* =========================================================
+   ERROR
+   ========================================================= */
 
 .login-error {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  margin-bottom: 1.25rem;
+
+  padding: 11px 13px;
+
+  margin-bottom: 17px;
+
+  color: #ff9da8;
+
+  background: rgba(255, 50, 75, 0.08);
+
+  border: 1px solid rgba(255, 50, 75, 0.18);
+
+  border-radius: 12px;
+
+  font-size: 11px;
 }
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-}
 
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  gap: 18px;
 }
 
 .input-group label {
-  font-size: 0.85rem;
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #9caaca;
+
+  font-size: 11px;
+
   font-weight: 600;
-  color: #334155;
 }
 
 .input-field {
   position: relative;
+
   display: flex;
   align-items: center;
+
+  height: 53px;
+
+  border-radius: 15px;
+
+  background: rgba(255,255,255,0.045);
+
+  border: 1px solid rgba(255,255,255,0.09);
+
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
 }
 
-.input-field .field-icon {
-  position: absolute;
-  left: 12px;
-  color: #94a3b8;
-  pointer-events: none;
+.input-field:focus-within {
+  background: rgba(20, 55, 110, 0.22);
+
+  border-color: rgba(0, 177, 255, 0.65);
+
+  box-shadow:
+    0 0 0 4px rgba(0, 157, 255, 0.08),
+    0 0 25px rgba(0, 157, 255, 0.10);
+}
+
+.field-icon {
+  margin-left: 15px;
+
+  color: #7185ac;
+
+  flex-shrink: 0;
 }
 
 .input-field input {
   width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 2.5rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.925rem;
-  color: #0f172a;
-  background: #ffffff;
-  outline: none;
-  transition: border-color 0.2s ease;
+  height: 100%;
+
+  padding: 0 13px;
+
+  color: white;
+
+  background: transparent;
+
+  border: 0;
+  outline: 0;
+
+  font-size: 13px;
 }
 
-.input-field input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+.input-field input::placeholder {
+  color: #586987;
+}
+
+/* Stop Chrome/Edge/Safari autofill from forcing a white
+   background + black text on the field (the "white box"
+   that shows once a saved credential is picked). We can't
+   restyle the browser's own suggestion dropdown, but this
+   keeps the input itself on-theme before/during/after it. */
+.input-field input:-webkit-autofill,
+.input-field input:-webkit-autofill:hover,
+.input-field input:-webkit-autofill:focus,
+.input-field input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+  box-shadow: 0 0 0 1000px rgba(10, 20, 45, 0.98) inset !important;
+}
+
+.input-field input:autofill {
+  color: #ffffff !important;
 }
 
 .toggle-password {
-  position: absolute;
-  right: 12px;
+  margin-right: 12px;
+
+  display: grid;
+  place-items: center;
+
+  color: #7183a7;
+
   background: transparent;
-  border: none;
-  color: #94a3b8;
+
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .toggle-password:hover {
-  color: #475569;
+  color: white;
+
+  transform: scale(1.1);
 }
+
+
+/* =========================================================
+   SUBMIT
+   ========================================================= */
 
 .submit-btn {
+  position: relative;
+
+  width: 100%;
+  height: 54px;
+
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0.8rem;
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 5px;
+
+  border-radius: 15px;
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-top: 0.5rem;
+
+  background:
+    linear-gradient(
+      100deg,
+      #00aaff,
+      #416cff 52%,
+      #a72cff
+    );
+
+  box-shadow:
+    0 12px 30px rgba(50, 99, 255, 0.28);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.35s cubic-bezier(.16,1,.3,1),
+    box-shadow 0.35s ease,
+    filter 0.35s ease;
 }
 
-.submit-btn:hover:not(:disabled) {
-  background: #1d4ed8;
+.submit-btn::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  transform: translateX(-110%);
+
+  background:
+    linear-gradient(
+      100deg,
+      transparent,
+      rgba(255,255,255,0.25),
+      transparent
+    );
+
+  transition:
+    transform 0.7s ease;
+}
+
+.submit-btn:hover::before {
+  transform: translateX(110%);
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 17px 38px rgba(50, 99, 255, 0.38),
+    0 0 30px rgba(94, 60, 255, 0.16);
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
 }
 
 .submit-btn:disabled {
-  opacity: 0.7;
   cursor: not-allowed;
+  opacity: 0.65;
 }
 
+
+/* Student login color */
+
+.submit-btn--student {
+  background:
+    linear-gradient(
+      100deg,
+      #6252ff,
+      #9342ff,
+      #d32eff
+    );
+
+  box-shadow:
+    0 12px 30px rgba(142, 55, 255, 0.30);
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
 .spin-icon {
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
   to {
     transform: rotate(360deg);
   }
 }
 
+
+/* =========================================================
+   LOGIN FOOTER
+   ========================================================= */
+
 .login-footer {
+  margin-top: 21px;
+
   text-align: center;
-  margin-top: 2rem;
-  font-size: 0.8rem;
-  color: #94a3b8;
-  line-height: 1.4;
+
+  color: #62718f;
+
+  font-size: 10px;
+
+  line-height: 1.6;
+}
+
+.login-footer strong {
+  color: #9caeff;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 600px) {
+
+  .portal-wrapper {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .portal-headline {
+    max-width: 650px;
+
+    width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .role-cards-container {
+    max-width: 650px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    gap: 16px;
+  }
+
+  .role-card-content {
+    min-height: 170px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .role-card-content h3 {
+    font-size: 18px;
+  }
+
+  .role-card-content p {
+    font-size: 11px;
+  }
+
+  .role-cta-btn {
+    width: 43px;
+    height: 43px;
+  }
+}
+
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 900px) {
+
+  .portal-wrapper {
+    padding-top: 38px;
+  }
+
+  .portal-brand h2 {
+    font-size: 29px;
+  }
+
+  .portal-headline {
+    margin-top: 48px;
+    margin-bottom: 30px;
+  }
+
+  .portal-headline h1 {
+    font-size: 58px;
+  }
+
+  .role-cards-container {
+    max-width: 760px;
+
+    grid-template-columns:
+      repeat(2, minmax(280px, 1fr));
+
+    gap: 22px;
+  }
+
+  .role-card {
+    border-radius: 26px;
+  }
+
+  .role-card-media {
+    aspect-ratio: 0.92;
+  }
+
+  .role-card-content {
+    min-height: 190px;
+  }
+
+  .role-card-content h3 {
+    font-size: 19px;
+  }
+
+  .role-card-content p {
+    font-size: 12px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .portal-wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .portal-logo {
+    width: 47px;
+    height: 47px;
+  }
+
+  .portal-brand h2 {
+    font-size: 22px;
+  }
+
+  .portal-headline {
+    margin-top: 28px;
+  }
+
+  .portal-headline h1 {
+    font-size: 32px;
+
+    letter-spacing: -2px;
+  }
+
+  .portal-headline p {
+    font-size: 11px;
+  }
+
+  .role-cards-container {
+    gap: 8px;
+  }
+
+  .role-card {
+    border-radius: 17px;
+  }
+
+  .role-card-media {
+    aspect-ratio: 0.72;
+  }
+
+  .role-card-content {
+    min-height: 135px;
+
+    padding:
+      10px
+      7px
+      11px;
+  }
+
+  .role-badge {
+    width: 37px;
+    height: 37px;
+
+    margin-top: -27px;
+  }
+
+  .role-card-content h3 {
+    font-size: 12px;
+  }
+
+  .role-card-content p {
+    font-size: 8px;
+  }
+
+  .role-cta-btn {
+    width: 31px;
+    height: 31px;
+
+    margin-top: 9px;
+  }
+
+  .portal-footer {
+    margin-top: 18px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* =========================================================
+   TOUCH DEVICES
+   ========================================================= */
+
+@media (hover: none) {
+
+  .role-card:hover {
+    transform: none;
+  }
+
+  .role-card:hover .role-card-media img {
+    transform: scale(1.02);
+  }
+
+  .role-card:active {
+    transform: scale(0.96);
+  }
+
+  .role-card:active .role-card-media img {
+    transform: scale(1.08);
+  }
+
+  .role-card:active .role-cta-btn {
+    transform: scale(1.15);
+  }
+}
+/* =========================================================
+   PERFECT LOGIN INPUT
+   ========================================================= */
+
+.input-field {
+  position: relative;
+
+  width: 100%;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: 16px;
+
+  background:
+    rgba(9, 20, 45, 0.72) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 8px 25px rgba(0,0,0,.12);
+
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease,
+    background .3s ease;
+}
+
+
+/* Focus */
+
+.input-field:focus-within {
+  border-color: #08aaff !important;
+
+  background:
+    rgba(10, 28, 58, 0.88) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(0,174,255,.08),
+    0 0 28px rgba(0,174,255,.12),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+
+/* Left icon */
+
+.input-field .field-icon {
+  flex: 0 0 52px;
+
+  width: 52px;
+  height: 100%;
+
+  margin: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: #7185ac;
+
+  pointer-events: none;
+}
+
+
+/* THE IMPORTANT PART */
+
+.input-field input {
+  flex: 1 1 auto;
+
+  min-width: 0;
+
+  width: auto !important;
+  height: 100%;
+
+  margin: 0 !important;
+  padding: 0 10px !important;
+
+  border: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+
+  outline: none !important;
+
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+
+  background: transparent !important;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  box-shadow: none !important;
+}
+
+
+/* Placeholder */
+
+.input-field input::placeholder {
+  color: #657594 !important;
+
+  opacity: 1;
+}
+
+
+/* Password eye */
+
+.toggle-password {
+  flex: 0 0 52px;
+
+  width: 52px;
+  height: 100%;
+
+  margin: 0 !important;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: #7185ac;
+
+  background: transparent !important;
+
+  border: none !important;
+  outline: none !important;
+
+  cursor: pointer;
+
+  transition:
+    color .25s ease,
+    transform .25s ease;
+}
+
+.toggle-password:hover {
+  color: #ffffff;
+
+  transform: scale(1.08);
+}
+
+
+/* =========================================================
+   AUTOFILL — KEEP EVERYTHING DARK
+   ========================================================= */
+
+.input-field input:-webkit-autofill,
+.input-field input:-webkit-autofill:hover,
+.input-field input:-webkit-autofill:focus,
+.input-field input:-webkit-autofill:active {
+
+  -webkit-text-fill-color: #ffffff !important;
+
+  caret-color: #ffffff !important;
+
+  background-color: transparent !important;
+
+  -webkit-box-shadow:
+    inset 0 0 0 1000px rgba(9,20,45,.98) !important;
+
+  box-shadow:
+    inset 0 0 0 1000px rgba(9,20,45,.98) !important;
+
+  border: none !important;
+  outline: none !important;
+}
+
+
+/* =========================================================
+   MATIONATONCE — FINAL LOGIN INPUT / ICON FIX
+   ========================================================= */
+
+/* .field-icon is the actual Lucide SVG */
+.input-field > .field-icon {
+  flex: 0 0 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  margin: 0 0 0 15px !important;
+  padding: 0 !important;
+  display: block !important;
+  color: #7185ac !important;
+  stroke-width: 2 !important;
+  pointer-events: none !important;
+}
+
+.input-field > .field-icon svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* One continuous input area */
+.input-field > input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* Password eye button */
+.input-field > .toggle-password {
+  flex: 0 0 46px !important;
+  width: 46px !important;
+  min-width: 46px !important;
+  max-width: 46px !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: #7185ac !important;
+  cursor: pointer;
+}
+
+.input-field > .toggle-password svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  display: block !important;
+  stroke-width: 2 !important;
+}
+
+/* Focus states */
+.input-field:focus-within > .field-icon {
+  color: #75bfff !important;
+}
+
+.input-field:focus-within > .toggle-password {
+  color: #8acaff !important;
+}
+
+.input-field > .toggle-password:hover {
+  color: #ffffff !important;
+  transform: scale(1.05) !important;
+}
+
+/* Keep Chrome/Edge autofill dark */
+.input-field > input:-webkit-autofill,
+.input-field > input:-webkit-autofill:hover,
+.input-field > input:-webkit-autofill:focus,
+.input-field > input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  -webkit-box-shadow: inset 0 0 0 1000px rgba(9,20,45,.98) !important;
+  box-shadow: inset 0 0 0 1000px rgba(9,20,45,.98) !important;
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .input-field {
+    height: 54px !important;
+    border-radius: 15px !important;
+  }
+
+  .input-field > .field-icon {
+    flex-basis: 21px !important;
+    width: 21px !important;
+    height: 21px !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+    max-width: 21px !important;
+    max-height: 21px !important;
+    margin-left: 14px !important;
+  }
+
+  .input-field > .field-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .input-field > input {
+    padding: 0 9px !important;
+    font-size: 14px !important;
+  }
+
+  .input-field > .toggle-password {
+    flex-basis: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+  }
+
+  .input-field > .toggle-password svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
 }
