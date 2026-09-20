@@ -2537,7 +2537,7 @@ button:focus-visible,
 
 @media (max-width: 480px) {
   .login-role-kicker {
-    margin: 0px auto 10px;
+    margin: -1px auto 10px;
   }
 }
 .login-header--staff .login-role-kicker {
