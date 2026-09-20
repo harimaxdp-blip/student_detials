@@ -2901,3 +2901,26 @@ button:focus-visible,
     transform: none !important;
   }
 }
+
+
+/* =========================================================
+   MOBILE LOGIN ROLE KICKER
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  /* STAFF - Mobile */
+  .login-role-kicker.staff-kicker {
+    padding: 9px 24px;
+    gap: 6px;
+    font-size: 8px;
+  }
+
+  /* STUDENT - Mobile */
+  .login-role-kicker.student-kicker {
+    padding: 9px 28px;
+    gap: 6px;
+    font-size: 8px;
+  }
+
+}
