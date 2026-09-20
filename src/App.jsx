@@ -1,4 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+
+import ClassIncharge from "./components/ClassIncharge";
 import StudentForm from "./components/StudentForm";
 import StudentDetails from "./components/StudentDetails";
 import Attendance from "./components/Attendance";
@@ -9,46 +17,257 @@ import StaffDashboard from "./components/StaffDashboard";
 import StaffRegister from "./components/StaffRegister";
 import StaffNavbar from "./components/StaffNavbar";
 
-function ProtectedRoute({ children, allowedRole }) {
-  const userRole = localStorage.getItem("userRole");
 
+// ============================================================
+// CLEAR ALL LOGIN SESSION
+// ============================================================
+
+export const clearLoginSession = () => {
+  // Role
+  localStorage.removeItem("userRole");
+
+  // Student
+  localStorage.removeItem("studentId");
+  localStorage.removeItem("studentEmail");
+  localStorage.removeItem("studentMobile");
+  localStorage.removeItem("studentUser");
+
+  // Common
+  localStorage.removeItem("uid");
+  localStorage.removeItem("userProfile");
+
+  // Staff
+  localStorage.removeItem("staffId");
+  localStorage.removeItem("staffEmail");
+};
+
+
+// ============================================================
+// GET CURRENT USER ROLE
+// ============================================================
+
+const getUserRole = () => {
+  return localStorage.getItem("userRole");
+};
+
+
+// ============================================================
+// ROOT REDIRECT
+// ============================================================
+
+function RootRedirect() {
+  const userRole = getUserRole();
+
+  // No login
   if (!userRole) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRole && userRole !== allowedRole) {
+  // Staff
+  if (userRole === "staff") {
     return (
       <Navigate
-        to={userRole === "student" ? "/student-dashboard" : "/staff-dashboard"}
+        to="/staff-dashboard"
         replace
       />
     );
   }
 
+  // Student
+  if (userRole === "student") {
+    return (
+      <Navigate
+        to="/student-dashboard"
+        replace
+      />
+    );
+  }
+
+  // Invalid login
+  return <Navigate to="/login" replace />;
+}
+
+
+// ============================================================
+// PROTECTED ROUTE
+// ============================================================
+
+function ProtectedRoute({
+  children,
+  allowedRole,
+}) {
+  const userRole = getUserRole();
+
+  // ----------------------------------------------------------
+  // NO LOGIN
+  // ----------------------------------------------------------
+
+  if (!userRole) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // INVALID ROLE
+  // ----------------------------------------------------------
+
+  if (
+    userRole !== "staff" &&
+    userRole !== "student"
+  ) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // STAFF ONLY ROUTE
+  // ----------------------------------------------------------
+
+  if (
+    allowedRole === "staff" &&
+    userRole !== "staff"
+  ) {
+    if (userRole === "student") {
+      return (
+        <Navigate
+          to="/student-dashboard"
+          replace
+        />
+      );
+    }
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // STUDENT ONLY ROUTE
+  // ----------------------------------------------------------
+
+  if (
+    allowedRole === "student" &&
+    userRole !== "student"
+  ) {
+    if (userRole === "staff") {
+      return (
+        <Navigate
+          to="/staff-dashboard"
+          replace
+        />
+      );
+    }
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // ACCESS ALLOWED
+  // ----------------------------------------------------------
+
   return children;
 }
 
-// Layout that displays the fixed navbar on all staff pages
+
+// ============================================================
+// STAFF LAYOUT
+// ============================================================
+
 function StaffLayout() {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+
+      {/* STAFF NAVBAR */}
+
       <StaffNavbar />
-      <div style={{ flex: 1 }}>
+
+
+      {/* PAGE CONTENT */}
+
+      <main
+        style={{
+          flex: 1,
+          width: "100%",
+        }}
+      >
         <Outlet />
-      </div>
+      </main>
+
     </div>
   );
 }
 
+
+// ============================================================
+// APP
+// ============================================================
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* PUBLIC AUTH ROUTES */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register-staff" element={<StaffRegister />} />
 
-        {/* STAFF ROUTES (ALL SHARE THE FIXED NAVBAR) */}
+      <Routes>
+
+        {/* ====================================================
+            ROOT
+            ==================================================== */}
+
+        <Route
+          path="/"
+          element={<RootRedirect />}
+        />
+
+
+        {/* ====================================================
+            LOGIN
+            ==================================================== */}
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+
+        {/* ====================================================
+            STAFF REGISTRATION
+            ==================================================== */}
+
+        <Route
+          path="/register-staff"
+          element={<StaffRegister />}
+        />
+
+
+        {/* ====================================================
+            STAFF PROTECTED ROUTES
+            ==================================================== */}
+
         <Route
           element={
             <ProtectedRoute allowedRole="staff">
@@ -56,34 +275,117 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/staff-dashboard" element={<StaffDashboard />} />
-          <Route path="/" element={<StudentForm />} />
-          <Route path="/d" element={<StudentDetails />} />
-          <Route path="/a" element={<Attendance />} />
-          <Route path="/ad" element={<AttendanceDashboard />} />
+
+          {/* ==================================================
+              STAFF DASHBOARD
+              ================================================== */}
+
+          <Route
+            path="/staff-dashboard"
+            element={<StaffDashboard />}
+          />
+
+
+          {/* ==================================================
+              NEW STUDENT REGISTRATION
+              ================================================== */}
+
+          <Route
+            path="/student-registration"
+            element={<StudentForm />}
+          />
+
+
+          {/* ==================================================
+              STUDENT RECORDS
+              ================================================== */}
+
+          <Route
+            path="/d"
+            element={<StudentDetails />}
+          />
+
+
+          {/* ==================================================
+              ATTENDANCE
+              ================================================== */}
+
+          <Route
+            path="/a"
+            element={<Attendance />}
+          />
+
+
+          {/* ==================================================
+              ATTENDANCE ANALYTICS
+              ================================================== */}
+
+          <Route
+            path="/ad"
+            element={<AttendanceDashboard />}
+          />
+
+
+          {/* ==================================================
+              CLASS INCHARGE
+              ================================================== */}
+
+          <Route
+            path="/class-incharge"
+            element={<ClassIncharge />}
+          />
+
         </Route>
 
-        {/* STUDENT DASHBOARD */}
+
+        {/* ====================================================
+            STUDENT DASHBOARD
+            ==================================================== */}
+
         <Route
           path="/student-dashboard"
           element={
-            <ProtectedRoute allowedRole="student">
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student/:id"
-          element={
-            <ProtectedRoute allowedRole="student">
+            <ProtectedRoute
+              allowedRole="student"
+            >
               <StudentDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* FALLBACK */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+
+        {/* ====================================================
+            STUDENT DASHBOARD WITH ID
+            ==================================================== */}
+
+        <Route
+          path="/student/:id"
+          element={
+            <ProtectedRoute
+              allowedRole="student"
+            >
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ====================================================
+            UNKNOWN URL
+            ==================================================== */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
+
       </Routes>
+
     </BrowserRouter>
   );
 }

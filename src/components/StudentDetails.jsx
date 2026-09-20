@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   collection,
@@ -16,6 +16,20 @@ import {
 } from "../cloudinary";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  TextRun,
+  WidthType,
+  HeadingLevel,
+  AlignmentType,
+} from "docx";
 import "./StudentDetails.css";
 
 // Lucide Icons
@@ -60,6 +74,7 @@ import {
   Check,
   Ban,
   UserCheck,
+  ChevronDown,
 } from "lucide-react";
 
 const STATUS = {
@@ -125,6 +140,10 @@ function StudentDetails() {
   const [courseFilter, setCourseFilter] = useState("all");
   const [attendanceOrder, setAttendanceOrder] = useState("none");
 
+  // Export dropdown state
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const exportDropdownRef = useRef(null);
+
   // Flipped card (ID tracking)
   const [openId, setOpenId] = useState(null);
 
@@ -136,6 +155,20 @@ function StudentDetails() {
   // Edit Modal State
   const [editingStudent, setEditingStudent] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  // Close export menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        exportDropdownRef.current &&
+        !exportDropdownRef.current.contains(event.target)
+      ) {
+        setShowExportMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const studentsRef = collection(db, "students");
@@ -350,55 +383,259 @@ function StudentDetails() {
     attendanceOrder,
   ]);
 
-  const exportToExcel = () => {
-    if (!filteredStudents.length) {
-      alert("No student records to export.");
-      return;
-    }
+  // ================= EXPORT FUNCTIONS =================
 
-    const dataToExport = filteredStudents.map((student, index) => {
+  const getExportRawRows = () => {
+    return filteredStudents.map((student, index) => {
+      const stat = computedAttendance[student.id] || { percentage: 0 };
       const fullAddress = [student.address, student.pincode]
         .filter(Boolean)
         .join(" - ");
 
       return {
-        "S.NO": index + 1,
-        "STUDENT NAME": student.fullName || "",
-        "DEPT": student.course || student.department || "",
-        "YEAR": student.year || student.academicYear || "",
-        "REG NO": student.regNo || student.rollNo || student.id || "",
-        "DOB": student.dob || "",
-        "BLOOD GROUP": student.bloodGroup || "",
-        "GENDER": student.gender || "",
-        "FATHER'S NAME": student.fatherName || "",
-        "MOTHER NAME": student.motherName || "",
-        "MOBILE NUMBER": student.studentMobile || student.mobile || "",
-        "ADDRESS": fullAddress || "",
+        sNo: index + 1,
+        name: student.fullName || "—",
+        regNo: student.regNo || student.rollNo || student.id?.slice(0, 8) || "—",
+        dept: student.course || student.department || "—",
+        mode: student.studyMode === "hybrid" || student.isHybrid ? "Hybrid" : "Regular",
+        mobile: student.studentMobile || student.mobile || "—",
+        fatherName: student.fatherName || "—",
+        fatherMobile: student.fatherMobile || "—",
+        motherName: student.motherName || "—",
+        motherMobile: student.motherMobile || "—",
+        guardianMobile: student.guardianMobile || "—",
+        attendance: `${stat.percentage}%`,
+        address: fullAddress || "—",
       };
     });
+  };
+
+  // 1. Export Excel (.xlsx)
+  const exportToExcel = (mode = "all") => {
+    if (!filteredStudents.length) {
+      alert("No student records to export.");
+      return;
+    }
+
+    const rows = getExportRawRows();
+    let dataToExport = [];
+    let colWidths = [];
+    let filename = `Student_Records_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    if (mode === "parents") {
+      filename = `Parent_Emergency_Contacts_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      dataToExport = rows.map((r) => ({
+        "S.NO": r.sNo,
+        "STUDENT NAME": r.name,
+        "REG NO": r.regNo,
+        "DEPT": r.dept,
+        "STUDENT MOBILE": r.mobile,
+        "FATHER NAME": r.fatherName,
+        "FATHER MOBILE": r.fatherMobile,
+        "MOTHER NAME": r.motherName,
+        "MOTHER MOBILE": r.motherMobile,
+        "GUARDIAN MOBILE": r.guardianMobile,
+        "ADDRESS": r.address,
+      }));
+      colWidths = [
+        { wch: 6 },
+        { wch: 22 },
+        { wch: 14 },
+        { wch: 24 },
+        { wch: 16 },
+        { wch: 20 },
+        { wch: 16 },
+        { wch: 20 },
+        { wch: 16 },
+        { wch: 16 },
+        { wch: 34 },
+      ];
+    } else {
+      dataToExport = rows.map((r) => ({
+        "S.NO": r.sNo,
+        "STUDENT NAME": r.name,
+        "REG NO": r.regNo,
+        "DEPT": r.dept,
+        "STUDY MODE": r.mode,
+        "STUDENT MOBILE": r.mobile,
+        "FATHER NAME": r.fatherName,
+        "FATHER MOBILE": r.fatherMobile,
+        "MOTHER NAME": r.motherName,
+        "MOTHER MOBILE": r.motherMobile,
+        "ATTENDANCE": r.attendance,
+        "ADDRESS": r.address,
+      }));
+      colWidths = [
+        { wch: 6 },
+        { wch: 22 },
+        { wch: 14 },
+        { wch: 24 },
+        { wch: 12 },
+        { wch: 16 },
+        { wch: 18 },
+        { wch: 16 },
+        { wch: 18 },
+        { wch: 16 },
+        { wch: 14 },
+        { wch: 34 },
+      ];
+    }
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    worksheet["!cols"] = [
-      { wch: 6 },
-      { wch: 24 },
-      { wch: 22 },
-      { wch: 10 },
-      { wch: 16 },
-      { wch: 14 },
-      { wch: 14 },
-      { wch: 12 },
-      { wch: 22 },
-      { wch: 22 },
-      { wch: 16 },
-      { wch: 36 },
-    ];
-
+    worksheet["!cols"] = colWidths;
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Details");
-
-    const dateSuffix = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(workbook, `Student_Records_${dateSuffix}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+    XLSX.writeFile(workbook, filename);
+    setShowExportMenu(false);
   };
+
+  // 2. Export PDF (.pdf)
+  const exportToPDF = (mode = "all") => {
+    if (!filteredStudents.length) {
+      alert("No student records to export.");
+      return;
+    }
+
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    const rows = getExportRawRows();
+    const dateStr = new Date().toLocaleDateString("en-IN");
+
+    doc.setFontSize(16);
+    doc.text(
+      mode === "parents" ? "Parent & Contact Directory" : "Student Academic & Contact Records",
+      40,
+      35
+    );
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated: ${dateStr} | Total Records: ${filteredStudents.length}`, 40, 50);
+
+    let headers = [];
+    let body = [];
+
+    if (mode === "parents") {
+      headers = [
+        ["#", "Student Name", "Reg No", "Dept", "Student Mobile", "Father Name", "Father Mobile", "Mother Mobile", "Address"],
+      ];
+      body = rows.map((r) => [
+        r.sNo,
+        r.name,
+        r.regNo,
+        r.dept,
+        r.mobile,
+        r.fatherName,
+        r.fatherMobile,
+        r.motherMobile,
+        r.address,
+      ]);
+    } else {
+      headers = [
+        ["#", "Student Name", "Reg No", "Dept", "Mode", "Mobile", "Father Mob", "Mother Mob", "Attd %", "Address"],
+      ];
+      body = rows.map((r) => [
+        r.sNo,
+        r.name,
+        r.regNo,
+        r.dept,
+        r.mode,
+        r.mobile,
+        r.fatherMobile,
+        r.motherMobile,
+        r.attendance,
+        r.address,
+      ]);
+    }
+
+    autoTable(doc, {
+      startY: 65,
+      head: headers,
+      body: body,
+      theme: "grid",
+      headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold" },
+      styles: { fontSize: 8, cellPadding: 4 },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+    });
+
+    doc.save(`${mode === "parents" ? "Parent_Directory" : "Student_Records"}_${new Date().toISOString().slice(0, 10)}.pdf`);
+    setShowExportMenu(false);
+  };
+
+  // 3. Export Word (.docx)
+  const exportToWord = async (mode = "all") => {
+    if (!filteredStudents.length) {
+      alert("No student records to export.");
+      return;
+    }
+
+    const rows = getExportRawRows();
+    const headers =
+      mode === "parents"
+        ? ["S.No", "Student Name", "Dept", "Student Mobile", "Father Name", "Father Mobile", "Mother Mobile"]
+        : ["S.No", "Student Name", "Dept", "Student Mobile", "Father Mobile", "Mother Mobile", "Attd %"];
+
+    const tableHeaderRow = new TableRow({
+      tableHeader: true,
+      children: headers.map(
+        (title) =>
+          new TableCell({
+            children: [
+              new Paragraph({
+                children: [new TextRun({ text: title, bold: true, color: "FFFFFF" })],
+              }),
+            ],
+            shading: { fill: "2980B9" },
+          })
+      ),
+    });
+
+    const tableDataRows = rows.map(
+      (r) =>
+        new TableRow({
+          children: (mode === "parents"
+            ? [r.sNo, r.name, r.dept, r.mobile, r.fatherName, r.fatherMobile, r.motherMobile]
+            : [r.sNo, r.name, r.dept, r.mobile, r.fatherMobile, r.motherMobile, r.attendance]
+          ).map(
+            (val) =>
+              new TableCell({
+                children: [new Paragraph(String(val || "—"))],
+              })
+          ),
+        })
+    );
+
+    const docxDocument = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph({
+              text: mode === "parents" ? "Student & Parent Contact Directory" : "Student Records & Attendance Report",
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: `Generated on: ${new Date().toLocaleDateString("en-IN")} | Total Records: ${filteredStudents.length}`,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ text: "" }),
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: [tableHeaderRow, ...tableDataRows],
+            }),
+          ],
+        },
+      ],
+    });
+
+    const blob = await Packer.toBlob(docxDocument);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${mode === "parents" ? "Parent_Directory" : "Student_Report"}_${new Date().toISOString().slice(0, 10)}.docx`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setShowExportMenu(false);
+  };
+
+  // ================= CARD & MODAL HANDLERS =================
 
   const toggleStudent = (e, studentId) => {
     if (e && e.stopPropagation) e.stopPropagation();
@@ -566,11 +803,7 @@ function StudentDetails() {
       alert("Student details and photo updated successfully.");
     } catch (error) {
       console.error("Update error:", error);
-      alert(
-        `Unable to update student.\n\n${
-          error.code || error.message
-        }`
-      );
+      alert(`Unable to update student.\n\n${error.code || error.message}`);
     } finally {
       setSaving(false);
     }
@@ -608,7 +841,6 @@ function StudentDetails() {
       {/* HEADER */}
       <header className="details-header">
         <div className="details-brand">
-
           <h1>Student Records</h1>
           <p>Real-time academic profiles and cumulative cloud attendance</p>
         </div>
@@ -727,14 +959,63 @@ function StudentDetails() {
             </button>
           )}
 
-          <button
-            type="button"
-            className="export-btn"
-            onClick={exportToExcel}
-            title="Download records as Excel sheet"
-          >
-            <Download size={15} /> Export
-          </button>
+          {/* MULTI-FORMAT EXPORT DROPDOWN */}
+          <div className="export-dropdown-wrapper" ref={exportDropdownRef}>
+            <button
+              type="button"
+              className="export-btn"
+              onClick={() => setShowExportMenu((prev) => !prev)}
+              title="Choose export format"
+            >
+              <Download size={15} /> Export <ChevronDown size={13} />
+            </button>
+
+            {showExportMenu && (
+              <div className="export-menu-dropdown">
+                <div className="export-group-title">Excel (.xlsx)</div>
+                <button
+                  type="button"
+                  onClick={() => exportToExcel("all")}
+                >
+                  <FileText size={14} className="icon-excel" /> Complete Records (Excel)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportToExcel("parents")}
+                >
+                  <PhoneCall size={14} className="icon-excel" /> Parents & Contacts (Excel)
+                </button>
+
+                <div className="export-divider" />
+
+                <div className="export-group-title">Document Formats</div>
+                <button
+                  type="button"
+                  onClick={() => exportToPDF("all")}
+                >
+                  <Download size={14} className="icon-pdf" /> Student Roster (PDF)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportToPDF("parents")}
+                >
+                  <PhoneCall size={14} className="icon-pdf" /> Parents Directory (PDF)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportToWord("all")}
+                >
+                  <FileText size={14} className="icon-word" /> Full Report (Word .docx)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportToWord("parents")}
+                >
+                  <PhoneCall size={14} className="icon-word" /> Parent Contacts (Word .docx)
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -863,7 +1144,7 @@ function StudentDetails() {
                           </span>
                         </div>
 
-                        {/* PROPER 4-COLUMN ALIGNED STRIP */}
+                        {/* 4-COLUMN ALIGNED STRIP */}
                         <div className="student-summary-strip">
                           {/* 1. Mobile */}
                           <div className="summary-item">
@@ -1017,7 +1298,7 @@ function StudentDetails() {
                           </dl>
                         </div>
 
-                        {/* Contact & Family */}
+                        {/* Contact & Family (Includes all parent numbers) */}
                         <div className="detail-card-panel">
                           <span className="panel-tag"><UsersRound size={13} /> <span>Contact & Family</span></span>
                           <dl className="info-grid">
@@ -1037,7 +1318,7 @@ function StudentDetails() {
                               <dd className="email-value">{student.studentEmail || "—"}</dd>
                             </div>
 
-                            {/* Father Block: Number under Name */}
+                            {/* Father Block */}
                             <div className="parent-detail-block">
                               <dt><UserCheck size={11} /> Father</dt>
                               <dd>
@@ -1055,7 +1336,7 @@ function StudentDetails() {
                               </dd>
                             </div>
 
-                            {/* Mother Block: Number under Name */}
+                            {/* Mother Block */}
                             <div className="parent-detail-block">
                               <dt><Heart size={11} /> Mother</dt>
                               <dd>
@@ -1072,6 +1353,26 @@ function StudentDetails() {
                                 )}
                               </dd>
                             </div>
+
+                            {/* Guardian Block */}
+                            {(student.guardianName || student.guardianMobile) && (
+                              <div className="parent-detail-block">
+                                <dt><Contact size={11} /> Guardian</dt>
+                                <dd>
+                                  <span className="parent-name">{student.guardianName || "—"}</span>
+                                  {student.guardianMobile && (
+                                    <a
+                                      className="parent-phone"
+                                      href={`tel:${String(student.guardianMobile).replace(/\D/g, "")}`}
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <PhoneCall size={10} />
+                                      <span>{formatPhone(student.guardianMobile)}</span>
+                                    </a>
+                                  )}
+                                </dd>
+                              </div>
+                            )}
 
                             {student.address && (
                               <div className="grid-full">

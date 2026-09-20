@@ -1081,7 +1081,7 @@ button:focus-visible,
 
   padding: 26px 20px 22px;
 
-  border-radius: 28px;
+  border-radius: 40px;
 
   background:
     linear-gradient(
@@ -2051,5 +2051,850 @@ button:focus-visible,
   .input-field > .toggle-password svg {
     width: 18px !important;
     height: 18px !important;
+  }
+}
+/* =========================================================
+   PREMIUM ROLE IMAGE — LOGIN HEADER
+   ========================================================= */
+
+.login-header--staff,
+.login-header--student {
+  position: relative;
+}
+
+/* Image container */
+.login-role-art {
+  position: relative;
+
+  width: 118px;
+  height: 118px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 28px;
+
+  isolation: isolate;
+
+  animation:
+    roleImageFloat 5s ease-in-out infinite;
+}
+
+/* Actual artwork */
+.login-role-art-img {
+  position: relative;
+  z-index: 3;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 25px;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.18);
+
+  transition:
+    transform .55s cubic-bezier(.16,1,.3,1),
+    filter .4s ease;
+}
+
+/* Staff blue glow */
+.login-header--staff .login-role-art-glow {
+  position: absolute;
+  z-index: 1;
+
+  inset: -22px;
+
+  border-radius: 40px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0,174,255,.42),
+      rgba(0,100,255,.14) 45%,
+      transparent 72%
+    );
+
+  filter: blur(18px);
+
+  opacity: .85;
+
+  animation: roleGlowPulse 3.5s ease-in-out infinite;
+}
+
+/* Student purple glow */
+.login-header--student .login-role-art-glow {
+  position: absolute;
+  z-index: 1;
+
+  inset: -22px;
+
+  border-radius: 40px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(174,58,255,.45),
+      rgba(105,55,255,.15) 45%,
+      transparent 72%
+    );
+
+  filter: blur(18px);
+
+  opacity: .85;
+
+  animation: roleGlowPulse 3.5s ease-in-out infinite;
+}
+
+
+/* Animated glass shine */
+.login-role-art-shine {
+  position: absolute;
+  z-index: 5;
+
+  top: -60%;
+  left: -80%;
+
+  width: 45%;
+  height: 220%;
+
+  pointer-events: none;
+
+  transform: rotate(28deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.25),
+      transparent
+    );
+
+  filter: blur(4px);
+
+  animation:
+    roleImageShine 4.5s ease-in-out infinite;
+}
+
+
+/* Staff border */
+.login-header--staff .login-role-art-img {
+  border-color: rgba(0,190,255,.38);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.42),
+    0 0 35px rgba(0,174,255,.18),
+    inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+
+/* Student border */
+.login-header--student .login-role-art-img {
+  border-color: rgba(181,75,255,.40);
+
+  box-shadow:
+    0 20px 45px rgba(0,0,0,.42),
+    0 0 35px rgba(161,55,255,.20),
+    inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+
+/* Hover */
+.login-role-art:hover .login-role-art-img {
+  transform:
+    translateY(-5px)
+    scale(1.035);
+
+  filter:
+    brightness(1.08)
+    saturate(1.12);
+}
+
+
+/* =========================================================
+   ROLE ACCESS LABEL
+   ========================================================= */
+
+.login-role-kicker {
+  width: fit-content;
+
+  margin: 0 auto 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* Staff */
+.login-header--staff .login-role-kicker {
+  color: #72d9ff;
+
+  background:
+    rgba(0,174,255,.08);
+
+  border: 1px solid rgba(0,174,255,.18);
+
+  box-shadow:
+    0 0 18px rgba(0,174,255,.08);
+}
+
+
+/* Student */
+.login-header--student .login-role-kicker {
+  color: #c99aff;
+
+  background:
+    rgba(158,64,255,.08);
+
+  border: 1px solid rgba(174,70,255,.18);
+
+  box-shadow:
+    0 0 18px rgba(174,70,255,.08);
+}
+
+
+/* =========================================================
+   ROLE-SPECIFIC TITLE
+   ========================================================= */
+
+.login-header--staff h1 {
+  text-shadow:
+    0 0 25px rgba(0,174,255,.12);
+}
+
+.login-header--student h1 {
+  text-shadow:
+    0 0 25px rgba(164,64,255,.14);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes roleImageFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+
+@keyframes roleGlowPulse {
+  0%,
+  100% {
+    transform: scale(.92);
+    opacity: .55;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: .95;
+  }
+}
+
+
+@keyframes roleImageShine {
+  0% {
+    left: -80%;
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  42% {
+    left: 150%;
+    opacity: 0;
+  }
+
+  100% {
+    left: 150%;
+    opacity: 0;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .login-role-art {
+    width: 102px;
+    height: 102px;
+
+    margin-bottom: 15px;
+
+    border-radius: 24px;
+  }
+
+  .login-role-art-img {
+    border-radius: 22px;
+  }
+
+  .login-role-art-glow {
+    inset: -17px !important;
+  }
+
+  .login-role-kicker {
+    font-size: 8px;
+
+    padding: 5px 9px;
+
+    letter-spacing: 1.2px;
+  }
+
+  .login-header h1 {
+    font-size: 22px;
+  }
+
+  .login-header p {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .login-role-art,
+  .login-role-art-glow,
+  .login-role-art-shine {
+    animation: none !important;
+  }
+}
+
+/* =========================================================
+   MATIONATONCE — FINAL LOGIN HERO + INPUT OVERRIDES
+   ========================================================= */
+
+/* ---------------- LOGIN HERO ---------------- */
+
+.login-header {
+  position: relative;
+  text-align: center;
+
+  margin-top: 18px;
+  margin-bottom: 22px;
+
+  padding: 0;
+}
+
+/*
+   IMPORTANT:
+   This is a STATIC artwork area.
+   No float, pulse, shine, hover transform or animated glow.
+*/
+.login-role-art {
+  position: relative;
+
+  width: min(220px, 72vw);
+  height: 190px;
+
+  margin: 0 auto 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
+
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Inside login asset only */
+.login-role-art-img {
+  position: relative;
+  z-index: 2;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  transform: none !important;
+  filter: none !important;
+
+  animation: none !important;
+
+  transition: none !important;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/*
+   If staff_lo.png / studlo.png has a black background baked
+   into the image, screen blending removes the black visually
+   against the dark login surface while preserving bright artwork.
+*/
+.login-header--staff .login-role-art-img,
+.login-header--student .login-role-art-img {
+  mix-blend-mode: screen;
+}
+
+/* No decorative animation layers */
+.login-role-art-glow,
+.login-role-art-shine {
+  display: none !important;
+  animation: none !important;
+}
+
+/* Absolutely static on hover/focus */
+.login-role-art:hover,
+.login-role-art:focus,
+.login-role-art:focus-visible,
+.login-role-art:hover .login-role-art-img {
+  transform: none !important;
+  filter: none !important;
+}
+
+
+/* ---------------- ROLE ACCESS PILL ---------------- */
+
+.login-role-kicker {
+  width: fit-content;
+
+  margin: 0 auto 12px;
+
+  padding: 7px 13px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1.35px;
+
+  background: rgba(255,255,255,.035);
+
+  animation: none !important;
+}
+
+.login-header--staff .login-role-kicker {
+  color: #74d9ff;
+
+  border: 1px solid rgba(0,190,255,.20);
+
+  box-shadow: 0 0 20px rgba(0,174,255,.07);
+}
+
+.login-header--student .login-role-kicker {
+  color: #cf9dff;
+
+  border: 1px solid rgba(178,77,255,.22);
+
+  box-shadow: 0 0 20px rgba(160,60,255,.07);
+}
+
+
+/* ---------------- TITLE ---------------- */
+
+.login-header h1 {
+  margin: 0;
+
+  color: #f7f9ff;
+
+  font-size: clamp(23px, 6vw, 28px);
+  line-height: 1.12;
+
+  font-weight: 800;
+
+  letter-spacing: -.9px;
+}
+
+.login-header p {
+  max-width: 390px;
+
+  margin: 10px auto 0;
+
+  color: #8492b0;
+
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+
+/* ---------------- LOGIN CARD SPACING ---------------- */
+
+.login-card {
+  overflow: visible;
+}
+
+.login-form {
+  gap: 17px;
+}
+
+
+/* ---------------- CLEAN INPUT ---------------- */
+
+.input-field {
+  position: relative;
+
+  width: 100%;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 15px;
+
+  background: rgba(8,19,43,.72) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 8px 24px rgba(0,0,0,.12);
+
+  transition:
+    border-color .3s ease,
+    background .3s ease,
+    box-shadow .3s ease;
+}
+
+.input-field:focus-within {
+  background: rgba(10,28,58,.88) !important;
+
+  border-color: rgba(0,181,255,.68) !important;
+
+  box-shadow:
+    0 0 0 3px rgba(0,174,255,.075),
+    0 0 28px rgba(0,174,255,.12),
+    inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+
+/* Actual Lucide Mail / Lock SVG */
+.input-field > .field-icon {
+  flex: 0 0 22px !important;
+
+  width: 22px !important;
+  height: 22px !important;
+
+  min-width: 22px !important;
+  min-height: 22px !important;
+
+  max-width: 22px !important;
+  max-height: 22px !important;
+
+  margin: 0 0 0 15px !important;
+  padding: 0 !important;
+
+  display: block !important;
+
+  color: #7185ac !important;
+
+  stroke-width: 2 !important;
+
+  pointer-events: none !important;
+}
+
+
+/* Input text */
+.input-field > input {
+  flex: 1 1 auto !important;
+
+  min-width: 0 !important;
+
+  width: auto !important;
+  height: 100% !important;
+
+  margin: 0 !important;
+
+  padding:
+    0 10px !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  background: transparent !important;
+
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+
+  font-size: 14px !important;
+  font-weight: 500 !important;
+
+  box-shadow: none !important;
+}
+
+.input-field > input::placeholder {
+  color: #647493 !important;
+  opacity: 1 !important;
+}
+
+
+/* Password eye */
+.input-field > .toggle-password {
+  flex: 0 0 46px !important;
+
+  width: 46px !important;
+  min-width: 46px !important;
+  max-width: 46px !important;
+
+  height: 100% !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  color: #7185ac !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+
+  cursor: pointer;
+
+  transition:
+    color .25s ease,
+    transform .25s ease;
+}
+
+.input-field > .toggle-password svg {
+  width: 18px !important;
+  height: 18px !important;
+
+  min-width: 18px !important;
+  min-height: 18px !important;
+
+  max-width: 18px !important;
+  max-height: 18px !important;
+
+  display: block !important;
+
+  stroke-width: 2 !important;
+}
+
+.input-field > .toggle-password:hover {
+  color: #ffffff !important;
+  transform: scale(1.05) !important;
+}
+
+.input-field:focus-within > .field-icon {
+  color: #75bfff !important;
+}
+
+
+/* ---------------- AUTOFILL ---------------- */
+
+.input-field > input:-webkit-autofill,
+.input-field > input:-webkit-autofill:hover,
+.input-field > input:-webkit-autofill:focus,
+.input-field > input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+
+  -webkit-box-shadow:
+    inset 0 0 0 1000px rgba(8,19,43,.98) !important;
+
+  box-shadow:
+    inset 0 0 0 1000px rgba(8,19,43,.98) !important;
+
+  background-color: transparent !important;
+
+  border: 0 !important;
+}
+
+
+/* ---------------- MOBILE ---------------- */
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding:
+      max(14px, env(safe-area-inset-top))
+      12px
+      max(16px, env(safe-area-inset-bottom));
+  }
+
+  .login-card {
+    max-width: 100%;
+    padding: 20px 18px 18px;
+    border-radius: 24px;
+  }
+
+  .back-btn {
+    padding: 8px 10px;
+  }
+
+  .login-header {
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+
+  .login-role-art {
+    width: min(205px, 68vw);
+    height: 172px;
+
+    margin-bottom: 2px;
+  }
+
+  .login-role-kicker {
+    margin-bottom: 10px;
+
+    padding: 6px 11px;
+
+    font-size: 8px;
+    letter-spacing: 1.15px;
+  }
+
+  .login-header h1 {
+    font-size: 22px;
+  }
+
+  .login-header p {
+    max-width: 310px;
+    font-size: 11px;
+  }
+
+  .input-field {
+    height: 54px;
+    border-radius: 15px;
+  }
+
+  .input-field > .field-icon {
+    flex-basis: 21px !important;
+
+    width: 21px !important;
+    height: 21px !important;
+
+    min-width: 21px !important;
+    min-height: 21px !important;
+
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    margin-left: 14px !important;
+  }
+
+  .input-field > input {
+    padding: 0 9px !important;
+    font-size: 14px !important;
+  }
+
+  .input-field > .toggle-password {
+    flex-basis: 44px !important;
+
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+  }
+
+  .submit-btn {
+    height: 54px;
+  }
+}
+
+
+/* ---------------- DESKTOP ---------------- */
+
+@media (min-width: 900px) {
+  .login-card {
+    max-width: 500px;
+    padding: 28px 26px 24px;
+  }
+
+  .login-role-art {
+    width: 235px;
+    height: 205px;
+  }
+
+  .login-header {
+    margin-top: 20px;
+    margin-bottom: 24px;
+  }
+
+  .login-header h1 {
+    font-size: 28px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+}
+
+
+/* ---------------- ACCESSIBILITY ---------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-role-art,
+  .login-role-art-img,
+  .login-role-art-glow,
+  .login-role-art-shine,
+  .login-role-kicker {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }
