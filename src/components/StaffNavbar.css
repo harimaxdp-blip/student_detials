@@ -1,576 +1,260 @@
-/* =========================================
-   FACULTY PORTAL NAVBAR
-========================================= */
+/* ============================================================
+   STAFF NAVBAR - CYBER SLATE (DARK) THEME
+============================================================ */
+
+:root {
+  --nav-bg: #090d16;
+  --nav-border: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary-cyan: #38bdf8;
+  --primary-glow: rgba(56, 189, 248, 0.15);
+  --active-bg: rgba(56, 189, 248, 0.12);
+  --danger-accent: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.1);
+  --shadow-dark: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+}
 
 .staff-dash-header {
   position: sticky;
   top: 0;
-  z-index: 1000;
-
+  left: 0;
   width: 100%;
-  min-height: 70px;
-
-  display: flex;
-  align-items: center;
-
-  padding: 10px 28px;
-
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  border-bottom: 1px solid #e8edf3;
-
-  box-shadow:
-    0 4px 20px rgba(15, 23, 42, 0.06);
-
-  box-sizing: border-box;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-border);
+  box-shadow: var(--shadow-dark);
+  z-index: 1000;
 }
 
+.staff-header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
 
-/* =========================================
-   BRAND
-========================================= */
-
+/* Brand Section */
 .staff-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-
+  gap: 0.85rem;
+  text-decoration: none;
   flex-shrink: 0;
 }
 
-.staff-icon-badge {
-  width: 43px;
-  height: 43px;
-
+.staff-logo-wrapper {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+  overflow: hidden;
+  padding: 4px;
+}
 
-  border-radius: 12px;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #4f46e5
-  );
-
-  color: white;
-
-  box-shadow:
-    0 6px 16px rgba(37, 99, 235, 0.25);
+.staff-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .staff-brand-text h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
   margin: 0;
-
-  font-size: 17px;
-  font-weight: 750;
-
-  color: #111827;
-
-  letter-spacing: -0.3px;
+  letter-spacing: -0.01em;
 }
 
 .staff-brand-text span {
-  display: block;
-
-  margin-top: 2px;
-
-  font-size: 11px;
-  color: #64748b;
-
-  white-space: nowrap;
+  font-size: 0.72rem;
+  color: var(--primary-cyan);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
-
-/* =========================================
-   DESKTOP NAVIGATION
-========================================= */
-
+/* Desktop Links */
 .staff-nav-links {
   display: flex;
   align-items: center;
-
-  gap: 4px;
-
-  margin-left: auto;
-  margin-right: 18px;
+  gap: 0.25rem;
 }
 
 .staff-nav-link {
-  position: relative;
-
   display: flex;
   align-items: center;
-  gap: 7px;
-
-  padding: 10px 13px;
-
-  color: #64748b;
-
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
   text-decoration: none;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  border-radius: 9px;
-
-  transition:
-    color 0.2s ease,
-    background 0.2s ease,
-    transform 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: 1px solid transparent;
 }
 
 .staff-nav-link:hover {
-  color: #2563eb;
-  background: #eff6ff;
-
-  transform: translateY(-1px);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .staff-nav-link.active {
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--primary-cyan);
+  background: var(--active-bg);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 15px var(--primary-glow);
 }
 
-
-/* Active bottom line */
-
-.staff-nav-link.active::after {
-  content: "";
-
-  position: absolute;
-
-  left: 50%;
-  bottom: -11px;
-
-  width: 22px;
-  height: 3px;
-
-  transform: translateX(-50%);
-
-  border-radius: 20px;
-
-  background: #2563eb;
-}
-
-
-/* =========================================
-   LOGOUT
-========================================= */
-
+/* Action / Logout */
 .staff-logout-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  border: none;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  background-color: var(--danger-bg);
+  color: var(--danger-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-
-  padding: 10px 15px;
-
-  border-radius: 9px;
-
-  background: #fef2f2;
-  color: #dc2626;
-
-  font-size: 13px;
-  font-weight: 650;
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .staff-logout-btn:hover {
-  background: #fee2e2;
-
-  transform: translateY(-1px);
+  background-color: var(--danger-accent);
+  color: #090d16;
+  box-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
 }
 
-
-/* =========================================
-   HAMBURGER BUTTON
-========================================= */
-
+/* Mobile Toggle */
 .staff-menu-btn {
   display: none;
-
-  width: 44px;
-  height: 44px;
-
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid #e2e8f0;
-
-  border-radius: 11px;
-
-  background: white;
-
-  color: #1e293b;
-
+  background: transparent;
+  border: 1px solid var(--nav-border);
+  color: var(--text-main);
   cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  padding: 0.45rem;
+  border-radius: 8px;
 }
 
-.staff-menu-btn:active {
-  transform: scale(0.94);
-  background: #f1f5f9;
+.staff-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-
-/* =========================================
-   MOBILE MENU
-========================================= */
+/* Mobile Drawer */
+.staff-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 998;
+}
 
 .staff-mobile-menu {
-  display: none;
+  position: fixed;
+  top: 70px;
+  right: 0;
+  width: 290px;
+  height: calc(100vh - 70px);
+  background: var(--nav-bg);
+  border-left: 1px solid var(--nav-border);
+  box-shadow: var(--shadow-dark);
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
 }
 
-
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width: 1050px) {
-
-  .staff-dash-header {
-    padding: 9px 20px;
-  }
-
-  .staff-brand-text span {
-    display: none;
-  }
-
-  .staff-nav-link {
-    padding: 9px 10px;
-    font-size: 12px;
-  }
-
-  .staff-nav-link span {
-    display: none;
-  }
-
-  .staff-nav-link {
-    gap: 0;
-  }
-
+.staff-mobile-menu.show {
+  transform: translateX(0);
 }
 
+.mobile-menu-inner {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 
-/* =========================================
-   ANDROID / MOBILE
-========================================= */
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
 
-@media (max-width: 768px) {
+.mobile-nav-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
 
-  .staff-dash-header {
-    min-height: 64px;
+.mobile-nav-link.active {
+  color: var(--primary-cyan);
+  background: var(--active-bg);
+  border-color: rgba(56, 189, 248, 0.25);
+}
 
-    padding: 9px 14px;
+.mobile-menu-divider {
+  height: 1px;
+  background-color: var(--nav-border);
+  margin: 1rem 0;
+}
 
-    background: rgba(255, 255, 255, 0.97);
+.mobile-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  background-color: var(--danger-bg);
+  color: var(--danger-accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-    box-shadow:
-      0 3px 15px rgba(15, 23, 42, 0.08);
-  }
+.mobile-logout-btn:hover {
+  background-color: var(--danger-accent);
+  color: #090d16;
+}
 
-
-  /* Brand */
-
-  .staff-brand {
-    gap: 10px;
-  }
-
-  .staff-icon-badge {
-    width: 39px;
-    height: 39px;
-
-    border-radius: 10px;
-  }
-
-  .staff-brand-text h2 {
-    font-size: 16px;
-  }
-
-  .staff-brand-text span {
-    display: none;
-  }
-
-
-  /* Hide desktop nav */
-
-  .staff-nav-links {
-    display: none;
-  }
-
+@media (max-width: 1150px) {
+  .staff-nav-links,
   .desktop-logout {
     display: none;
   }
-
-
-  /* Show hamburger */
-
   .staff-menu-btn {
-    display: flex;
-
-    margin-left: auto;
-  }
-
-
-  /* Mobile menu */
-
-  .staff-mobile-menu {
-    position: absolute;
-
-    top: calc(100% + 1px);
-    left: 0;
-    right: 0;
-
-    display: block;
-
-    background: rgba(255, 255, 255, 0.98);
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    border-bottom:
-      1px solid #e2e8f0;
-
-    box-shadow:
-      0 15px 35px rgba(15, 23, 42, 0.12);
-
-    overflow: hidden;
-
-    max-height: 0;
-    opacity: 0;
-
-    visibility: hidden;
-
-    transform: translateY(-8px);
-
-    transition:
-      max-height 0.35s ease,
-      opacity 0.25s ease,
-      transform 0.35s ease,
-      visibility 0.35s;
-  }
-
-
-  .staff-mobile-menu.show {
-    max-height: 500px;
-
-    opacity: 1;
-
-    visibility: visible;
-
-    transform: translateY(0);
-  }
-
-
-  /* Menu content */
-
-  .mobile-menu-inner {
-    padding: 10px 14px 14px;
-  }
-
-
-  /* Mobile links */
-
-  .mobile-nav-link {
     display: flex;
     align-items: center;
-
-    gap: 14px;
-
-    width: 100%;
-
-    min-height: 50px;
-
-    padding: 0 14px;
-
-    margin: 4px 0;
-
-    box-sizing: border-box;
-
-    color: #475569;
-
-    text-decoration: none;
-
-    border-radius: 11px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    transition:
-      background 0.2s ease,
-      color 0.2s ease,
-      transform 0.15s ease;
+    justify-content: center;
   }
-
-
-  .mobile-nav-link:active {
-    transform: scale(0.98);
-  }
-
-
-  .mobile-nav-link:hover {
-    background: #f8fafc;
-  }
-
-
-  /* Active mobile link */
-
-  .mobile-nav-link.active {
-    color: #2563eb;
-
-    background: #eff6ff;
-  }
-
-
-  .mobile-nav-link.active svg {
-    color: #2563eb;
-  }
-
-
-  /* Divider */
-
-  .mobile-menu-divider {
-    height: 1px;
-
-    margin: 9px 4px;
-
-    background: #e2e8f0;
-  }
-
-
-  /* Mobile logout */
-
-  .mobile-logout-btn {
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    width: 100%;
-
-    min-height: 50px;
-
-    padding: 0 14px;
-
-    border: none;
-
-    border-radius: 11px;
-
-    background: #fef2f2;
-
-    color: #dc2626;
-
-    font-size: 14px;
-    font-weight: 650;
-
-    cursor: pointer;
-
-    text-align: left;
-
-    transition:
-      background 0.2s ease,
-      transform 0.15s ease;
-  }
-
-  .mobile-logout-btn:active {
-    transform: scale(0.98);
-    background: #fee2e2;
-  }
-
 }
 
-
-/* =========================================
-   SMALL ANDROID PHONES
-========================================= */
-
-@media (max-width: 380px) {
-
-  .staff-dash-header {
-    padding-left: 10px;
-    padding-right: 10px;
+@media (max-width: 480px) {
+  .staff-header-container {
+    padding: 0 1rem;
   }
-
-  .staff-brand-text h2 {
-    font-size: 15px;
+  .staff-brand-text span {
+    display: none;
   }
-
-  .staff-icon-badge {
-    width: 37px;
-    height: 37px;
-  }
-
-  .staff-menu-btn {
-    width: 42px;
-    height: 42px;
-  }
-
-}
-
-
-/* =========================================
-   LANDSCAPE ANDROID
-========================================= */
-
-@media (max-width: 900px) and (orientation: landscape) {
-
-  .staff-dash-header {
-    min-height: 58px;
-  }
-
-  .staff-mobile-menu {
-    max-height: 0;
-  }
-
-  .staff-mobile-menu.show {
-    max-height: 350px;
-    overflow-y: auto;
-  }
-
-}
-
-
-/* =========================================
-   ACCESSIBILITY
-========================================= */
-
-.staff-nav-link:focus-visible,
-.staff-logout-btn:focus-visible,
-.staff-menu-btn:focus-visible,
-.mobile-nav-link:focus-visible,
-.mobile-logout-btn:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.25);
-  outline-offset: 2px;
-}
-
-
-/* =========================================
-   REDUCE ANIMATION
-========================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-  .staff-nav-link,
-  .staff-logout-btn,
-  .staff-mobile-menu,
-  .mobile-nav-link,
-  .mobile-logout-btn,
-  .staff-menu-btn {
-    transition: none;
-  }
-
 }

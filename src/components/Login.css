@@ -2509,28 +2509,31 @@ button:focus-visible,
 
 .login-role-kicker {
   width: fit-content;
-
-  margin: 0 auto 12px;
-
-  padding: 7px 13px;
-
+  margin: -5px auto 10px;
+  padding: 10px 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-
   border-radius: 999px;
-
   font-size: 9px;
   font-weight: 800;
-
   letter-spacing: 1.35px;
-
   background: rgba(255,255,255,.035);
-
   animation: none !important;
 }
 
+/* STAFF */
+.login-role-kicker.staff-kicker {
+  padding: 10px 45px;
+  gap: 10px;
+}
+
+/* STUDENT */
+.login-role-kicker.student-kicker {
+  padding: 10px 30px;
+  gap: 10px;
+}
 .login-header--staff .login-role-kicker {
   color: #74d9ff;
 

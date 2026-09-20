@@ -825,7 +825,7 @@ export default function StudentDashboard() {
             <BookOpen size={20} />
           </div>
           <div className="sdb-brand-text">
-            <strong>Faculty Portal</strong>
+            <strong>Student Portal</strong>
             <span>Student & Incharge Hub</span>
           </div>
         </div>

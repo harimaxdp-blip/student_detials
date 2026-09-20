@@ -1019,31 +1019,23 @@ export default function Login() {
 
           </div>
 
-          <div className="login-role-kicker">
-
-            {role === "staff" ? (
-              <>
-                <ShieldCheck
-                  size={14}
-                />
-
-                <span>
-                  STAFF ACCESS
-                </span>
-              </>
-            ) : (
-              <>
-                <GraduationCap
-                  size={14}
-                />
-
-                <span>
-                  STUDENT ACCESS
-                </span>
-              </>
-            )}
-
-          </div>
+<div
+  className={`login-role-kicker ${
+    role === "staff" ? "staff-kicker" : "student-kicker"
+  }`}
+>
+  {role === "staff" ? (
+    <>
+      <ShieldCheck size={14} />
+      <span>STAFF ACCESS</span>
+    </>
+  ) : (
+    <>
+      <GraduationCap size={14} />
+      <span>STUDENT ACCESS</span>
+    </>
+  )}
+</div>
 
         </div>
 
