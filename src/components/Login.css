@@ -2534,6 +2534,12 @@ button:focus-visible,
   padding: 10px 30px;
   gap: 10px;
 }
+
+@media (max-width: 480px) {
+  .login-role-kicker {
+    margin: 5px auto 10px;
+  }
+}
 .login-header--staff .login-role-kicker {
   color: #74d9ff;
 
@@ -2903,24 +2909,3 @@ button:focus-visible,
 }
 
 
-/* =========================================================
-   MOBILE LOGIN ROLE KICKER
-   ========================================================= */
-
-@media (max-width: 480px) {
-
-  /* STAFF - Mobile */
-  .login-role-kicker.staff-kicker {
-    padding: 9px 24px;
-    gap: 6px;
-    font-size: 8px;
-  }
-
-  /* STUDENT - Mobile */
-  .login-role-kicker.student-kicker {
-    padding: 9px 28px;
-    gap: 6px;
-    font-size: 8px;
-  }
-
-}
