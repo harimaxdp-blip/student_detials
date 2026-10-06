@@ -1,1333 +1,1317 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
-
 /* =========================================================
-   DESIGN TOKENS
-========================================================= */
+   HARIX ATTENDANCE UI
+   Unique prefix: harix-att-
+   Student design: PHOTO CARD -> NAME -> 4 ATTENDANCE OPTIONS
+   ========================================================= */
 
-:root {
-  /* ink & paper */
-  --ink: #1b2231;
-  --ink-soft: #565f70;
-  --ink-faint: #8892a0;
+#harix-attendance-root {
+  --ha-ink: #172033;
+  --ha-muted: #697386;
+  --ha-soft: #8b95a5;
+  --ha-bg: #eef1f5;
+  --ha-card: #ffffff;
+  --ha-line: #dce1e8;
+  --ha-primary: #315b91;
+  --ha-primary-dark: #234574;
+  --ha-present: #238653;
+  --ha-present-bg: #e8f7ee;
+  --ha-absent: #c43d3d;
+  --ha-absent-bg: #fcebea;
+  --ha-late: #b57516;
+  --ha-late-bg: #fff3dc;
+  --ha-nj: #687383;
+  --ha-nj-bg: #eef1f4;
+  --ha-shadow: 0 8px 25px rgba(22, 32, 51, .08);
+  --ha-radius: 16px;
 
-  --paper: #eef1ec;
-  --paper-raised: #ffffff;
-
-  --line: #dbdfe0;
-  --line-soft: #e8ebe9;
-
-  /* accent */
-  --accent: #33517c;
-  --accent-dark: #253a5c;
-  --accent-bg: #e9edf5;
-
-  /* status inks */
-  --present: #2f6f52;
-  --present-bg: #e6f2ea;
-  --present-line: #b7d9c3;
-
-  --absent: #9c3b32;
-  --absent-bg: #faeae8;
-  --absent-line: #eabab3;
-
-  --late: #a66a1e;
-  --late-bg: #faf0dd;
-  --late-line: #ecc98c;
-
-  --gray: #5c6472;
-  --gray-bg: #eceef0;
-  --gray-line: #d2d6dc;
-
-  /* elevation */
-  --shadow-sm: 0 1px 2px rgba(27, 34, 49, 0.06);
-  --shadow-md: 0 10px 28px rgba(27, 34, 49, 0.08);
-  --shadow-lg: 0 20px 48px rgba(27, 34, 49, 0.12);
-
-  /* radius */
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
-
-  /* type */
-  --font-display: "Fraunces", "Iowan Old Style", serif;
-  --font-body: "IBM Plex Sans", "Inter", sans-serif;
-
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  min-height: 100vh;
 }
 
-* {
+#harix-attendance-root,
+#harix-attendance-root * {
   box-sizing: border-box;
 }
 
-::selection {
-  background: var(--accent);
-  color: white;
+#harix-attendance-root button,
+#harix-attendance-root input,
+#harix-attendance-root select {
+  font: inherit;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: var(--r-sm);
-}
-
-/* =========================================================
-   PAGE & HEADER
-========================================================= */
-
-.attendance-page {
+/* PAGE */
+.harix-att-page {
   min-height: 100vh;
-  padding: 40px 32px 64px;
-  font-family: var(--font-body);
-  color: var(--ink);
-  background:
-    linear-gradient(180deg, #f2f4ef 0%, var(--paper) 340px),
-    repeating-linear-gradient(
-      180deg,
-      rgba(27, 34, 49, 0.025) 0px,
-      rgba(27, 34, 49, 0.025) 1px,
-      transparent 1px,
-      transparent 38px
-    );
+  padding: 28px 28px 60px;
+  background: linear-gradient(180deg, #f7f8fa 0%, var(--ha-bg) 100%);
+  color: var(--ha-ink);
+  font-family: Inter, Arial, sans-serif;
 }
 
-.attendance-header {
-  max-width: 1400px;
-  margin: 0 auto 24px;
-}
-
-.attendance-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--ink-soft);
-  text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 600;
-  transition: color 0.15s var(--ease);
-}
-
-.attendance-back:hover {
-  color: var(--accent);
-}
-
-.attendance-header h1 {
-  margin: 14px 0 4px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 40px;
-  letter-spacing: -0.5px;
-  color: var(--ink);
-}
-
-.attendance-header p {
-  margin: 0 0 16px;
-  color: var(--ink-soft);
-  font-size: 13.5px;
-}
-
-.attendance-header::after {
-  content: "";
-  display: block;
-  height: 1px;
-  margin-top: 16px;
-  background: linear-gradient(90deg, var(--ink) 0%, var(--line) 40%, transparent 100%);
-  opacity: 0.55;
-}
-
-/* =========================================================
-   NAVIGATION TABS
-========================================================= */
-
-.attendance-tabs {
-  max-width: 1400px;
-  margin: 0 auto 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.attendance-tab {
-  height: 42px;
-  padding: 0 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: var(--paper-raised);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s var(--ease), background 0.15s var(--ease), color 0.15s var(--ease);
-}
-
-.attendance-tab:hover {
-  border-color: #c3c9cc;
-  color: var(--ink);
-}
-
-.attendance-tab.active {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: white;
-  box-shadow: var(--shadow-sm);
-}
-
-.attendance-tab span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 7px;
-  border-radius: 12px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.attendance-tab.active span {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-/* =========================================================
-   CARD SHELLS
-========================================================= */
-
-.attendance-main-card,
-.attendance-history {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: var(--paper-raised);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-md);
-}
-
-.attendance-main-card {
-  padding: 26px;
-  margin-bottom: 24px;
-}
-
-/* =========================================================
-   TOP CONTROLS
-========================================================= */
-
-.attendance-top {
-  display: grid;
-  grid-template-columns: 240px 260px 1fr;
-  gap: 16px;
-  align-items: end;
-}
-
-.field-box label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--ink-faint);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-}
-
-.field-box input,
-.field-box select {
+/* HEADER */
+.harix-att-header,
+.harix-att-tabs,
+.harix-att-main-card,
+.harix-att-history {
   width: 100%;
-  height: 46px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--paper);
-  outline: none;
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 500;
-  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), background 0.15s var(--ease);
+  max-width: 1500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.field-box input:hover,
-.field-box select:hover {
-  border-color: #c3c9cc;
+.harix-att-header {
+  margin-bottom: 20px;
 }
 
-.field-box input:focus,
-.field-box select:focus {
-  border-color: var(--accent);
-  background: var(--paper-raised);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
-
-.day-display {
-  min-height: 46px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 15px;
-  border-radius: var(--r-md);
-  background: var(--paper);
-  border: 1px solid var(--line);
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.holiday-badge,
-.class-badge {
-  padding: 4px 9px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.holiday-badge {
-  background: var(--absent-bg);
-  color: var(--absent);
-  border: 1px solid var(--absent-line);
-}
-
-.class-badge {
-  background: var(--present-bg);
-  color: var(--present);
-  border: 1px solid var(--present-line);
-}
-
-/* =========================================================
-   DAY TYPE SECTION
-========================================================= */
-
-.day-type-section {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: var(--r-md);
-  background: var(--paper);
-  border: 1px solid var(--line);
-}
-
-.day-type-section > span {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--ink-faint);
-  letter-spacing: 0.4px;
-}
-
-.day-type-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.day-type-buttons button {
-  height: 40px;
-  padding: 0 16px;
+.harix-att-back {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: var(--paper-raised);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
+  color: var(--ha-muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.harix-att-back:hover {
+  color: var(--ha-primary);
+}
+
+.harix-att-header-title {
+  margin: 12px 0 5px;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -.8px;
+}
+
+.harix-att-header-subtitle {
+  margin: 0;
+  color: var(--ha-muted);
+  font-size: 14px;
+}
+
+/* TABS */
+.harix-att-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.harix-att-tab {
+  min-height: 45px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ha-line);
+  border-radius: 12px;
+  background: white;
+  color: var(--ha-muted);
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  transition: border-color 0.15s var(--ease), background 0.15s var(--ease), color 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
-.day-type-buttons button:hover:not(:disabled) {
-  border-color: #c3c9cc;
+.harix-att-tab.is-active {
+  background: var(--ha-primary);
+  border-color: var(--ha-primary);
+  color: white;
 }
 
-.day-type-buttons button:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.day-type-buttons button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.selected-class {
-  border-color: var(--present-line) !important;
-  background: var(--present-bg) !important;
-  color: var(--present) !important;
-}
-
-.selected-holiday {
-  border-color: var(--absent-line) !important;
-  background: var(--absent-bg) !important;
-  color: var(--absent) !important;
-}
-
-.day-type-section small {
-  display: block;
-  margin-top: 10px;
-  color: var(--ink-faint);
+.harix-att-tab span {
+  min-width: 23px;
+  height: 23px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #edf0f4;
+  color: var(--ha-ink);
   font-size: 11px;
 }
 
-/* =========================================================
-   HOLIDAY SCREEN
-========================================================= */
-
-.holiday-screen {
-  margin-top: 20px;
-  padding: 52px 20px;
-  text-align: center;
-  border-radius: var(--r-lg);
-  background: repeating-linear-gradient(
-      135deg,
-      var(--absent-bg),
-      var(--absent-bg) 12px,
-      #fbf2f0 12px,
-      #fbf2f0 24px
-    );
-  border: 1px dashed var(--absent-line);
+.harix-att-tab.is-active span {
+  background: rgba(255,255,255,.2);
+  color: white;
 }
 
-.holiday-icon {
-  font-size: 40px;
-  color: var(--absent);
+/* MAIN */
+.harix-att-main-card,
+.harix-att-history {
+  padding: 24px;
+  background: var(--ha-card);
+  border: 1px solid var(--ha-line);
+  border-radius: 20px;
+  box-shadow: var(--ha-shadow);
 }
 
-.holiday-screen h2 {
-  margin: 12px 0 4px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 24px;
-  color: var(--ink);
+/* CONTROLS */
+.harix-att-controls {
+  display: grid;
+  grid-template-columns: 250px 280px minmax(180px, 1fr);
+  gap: 14px;
+  align-items: end;
 }
 
-.holiday-screen p {
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: 12.5px;
-}
-
-.holiday-screen span {
+.harix-att-field-label,
+.harix-att-section-label {
   display: block;
-  margin: 10px 0 20px;
-  color: var(--ink-faint);
-  font-size: 11.5px;
+  margin-bottom: 7px;
+  color: var(--ha-soft);
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.holiday-screen button {
-  height: 42px;
+.harix-att-field-input,
+.harix-att-field-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 13px;
+  border: 1px solid var(--ha-line);
+  border-radius: 11px;
+  background: #f8f9fb;
+  color: var(--ha-ink);
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.harix-att-field-input:focus,
+.harix-att-field-select:focus,
+.harix-att-search:focus-within {
+  border-color: var(--ha-primary);
+  box-shadow: 0 0 0 3px rgba(49,91,145,.12);
+}
+
+.harix-att-day-display {
+  min-height: 48px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--ha-line);
+  border-radius: 11px;
+  background: #f8f9fb;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.harix-att-holiday-badge,
+.harix-att-class-badge {
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.harix-att-holiday-badge {
+  background: var(--ha-absent-bg);
+  color: var(--ha-absent);
+}
+
+.harix-att-class-badge {
+  background: var(--ha-present-bg);
+  color: var(--ha-present);
+}
+
+/* DAY TYPE */
+.harix-att-day-type {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--ha-line);
+  border-radius: 13px;
+  background: #f8f9fb;
+}
+
+.harix-att-day-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.harix-att-day-buttons button {
+  min-height: 44px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--ha-line);
+  border-radius: 10px;
+  background: white;
+  color: var(--ha-muted);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.harix-att-day-buttons button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.harix-att-day-class {
+  color: var(--ha-present) !important;
+  background: var(--ha-present-bg) !important;
+  border-color: #b8dfc7 !important;
+}
+
+.harix-att-day-holiday {
+  color: var(--ha-absent) !important;
+  background: var(--ha-absent-bg) !important;
+  border-color: #edbbb7 !important;
+}
+
+.harix-att-day-type small {
+  display: block;
+  margin-top: 9px;
+  color: var(--ha-soft);
+  font-size: 11px;
+}
+
+/* HOLIDAY */
+.harix-att-holiday-screen {
+  margin-top: 18px;
+  padding: 55px 20px;
+  text-align: center;
+  border: 1px dashed #e2b4b0;
+  border-radius: 16px;
+  background: #fff5f4;
+}
+
+.harix-att-holiday-icon {
+  color: var(--ha-absent);
+}
+
+.harix-att-holiday-screen h2 {
+  margin: 10px 0 4px;
+  font-size: 26px;
+}
+
+.harix-att-holiday-screen p {
+  margin: 0;
+  color: var(--ha-muted);
+}
+
+.harix-att-holiday-screen span {
+  display: block;
+  margin: 9px 0 20px;
+  color: var(--ha-soft);
+  font-size: 12px;
+}
+
+.harix-att-holiday-screen button {
+  min-height: 45px;
   padding: 0 20px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  border: none;
-  border-radius: var(--r-md);
-  background: var(--absent);
+  border: 0;
+  border-radius: 11px;
+  background: var(--ha-absent);
   color: white;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease);
 }
 
-.holiday-screen button:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.holiday-screen button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
-.attendance-toolbar {
-  margin-top: 22px;
+/* TOOLBAR */
+.harix-att-toolbar {
+  margin-top: 18px;
   display: flex;
-  gap: 10px;
+  gap: 9px;
   flex-wrap: wrap;
 }
 
-.attendance-search {
-  flex: 1;
-  min-width: 250px;
-  height: 44px;
-  padding: 0 14px;
+.harix-att-search {
+  flex: 1 1 300px;
+  min-height: 48px;
+  padding: 0 13px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--paper);
-  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+  gap: 9px;
+  border: 1px solid var(--ha-line);
+  border-radius: 11px;
+  background: #f8f9fb;
 }
 
-.attendance-search:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-  background: var(--paper-raised);
-}
-
-.attendance-search input {
+.harix-att-search-input {
   width: 100%;
-  border: none;
-  outline: none;
+  border: 0;
+  outline: 0;
   background: transparent;
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--ink);
+  color: var(--ha-ink);
+  font-size: 14px;
 }
 
-.attendance-toolbar > button {
-  height: 44px;
-  padding: 0 16px;
+.harix-att-toolbar > button {
+  min-height: 48px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: var(--paper-raised);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: 11.5px;
-  font-weight: 700;
+  border: 1px solid var(--ha-line);
+  border-radius: 11px;
+  background: white;
+  color: var(--ha-muted);
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.12s var(--ease), border-color 0.12s var(--ease), color 0.12s var(--ease);
 }
 
-.attendance-toolbar > button:hover {
-  transform: translateY(-1px);
-  border-color: #c3c9cc;
-  color: var(--ink);
-}
-
-.attendance-toolbar > button:active {
-  transform: translateY(0);
-}
-
-/* =========================================================
-   SUMMARY COUNTERS (6 STAT CARDS)
-========================================================= */
-
-.attendance-summary {
-  margin: 16px 0;
+/* SUMMARY */
+.harix-att-summary {
+  margin: 16px 0 20px;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 9px;
 }
 
-.attendance-summary > div {
-  padding: 14px 12px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: var(--paper-raised);
-  transition: box-shadow 0.15s var(--ease);
+.harix-att-summary-card {
+  min-height: 78px;
+  padding: 13px;
+  border: 1px solid var(--ha-line);
+  border-radius: 12px;
+  background: white;
 }
 
-.attendance-summary > div:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-.attendance-summary span {
+.harix-att-summary-card span {
   display: block;
-  color: var(--ink-faint);
+  color: var(--ha-soft);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-weight: 800;
 }
 
-.attendance-summary strong {
+.harix-att-summary-card strong {
   display: block;
-  margin-top: 5px;
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--ink);
+  margin-top: 6px;
+  font-size: 27px;
+  line-height: 1;
 }
 
-.attendance-summary .green {
-  background: var(--present-bg);
-  border-color: var(--present-line);
-}
-.attendance-summary .green strong {
-  color: var(--present);
+.harix-att-summary-green { background: var(--ha-present-bg); border-color: #b8dfc7; }
+.harix-att-summary-green strong { color: var(--ha-present); }
+.harix-att-summary-red { background: var(--ha-absent-bg); border-color: #edbbb7; }
+.harix-att-summary-red strong { color: var(--ha-absent); }
+.harix-att-summary-yellow { background: var(--ha-late-bg); border-color: #edcf99; }
+.harix-att-summary-yellow strong { color: var(--ha-late); }
+.harix-att-summary-gray { background: var(--ha-nj-bg); border-color: #d3d8df; }
+.harix-att-summary-gray strong { color: var(--ha-nj); }
+
+/* =========================================================
+   STUDENT CARD GRID
+   Desktop = 4 cards
+   Tablet  = 3 cards
+   Mobile  = 2 cards
+   ========================================================= */
+
+.harix-att-student-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
-.attendance-summary .red {
-  background: var(--absent-bg);
-  border-color: var(--absent-line);
-}
-.attendance-summary .red strong {
-  color: var(--absent);
-}
-
-.attendance-summary .yellow {
-  background: var(--late-bg);
-  border-color: var(--late-line);
-}
-.attendance-summary .yellow strong {
-  color: var(--late);
+.harix-att-student-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid var(--ha-line);
+  border-radius: var(--ha-radius);
+  background: white;
+  box-shadow: 0 3px 12px rgba(22,32,51,.055);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
-.attendance-summary .gray {
-  background: var(--gray-bg);
-  border-color: var(--gray-line);
+.harix-att-student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(22,32,51,.11);
+  border-color: #c9d1dc;
 }
-.attendance-summary .gray strong {
-  color: var(--gray);
+
+/* Status card tint */
+.harix-att-card-p { border-color: #9fd1b4; background: linear-gradient(180deg,#f8fffa 0%,#fff 100%); }
+.harix-att-card-a { border-color: #e4a7a2; background: linear-gradient(180deg,#fff9f8 0%,#fff 100%); }
+.harix-att-card-l { border-color: #e4c281; background: linear-gradient(180deg,#fffdf7 0%,#fff 100%); }
+.harix-att-card-nj { border-color: #c8ced6; background: linear-gradient(180deg,#fafbfc 0%,#fff 100%); }
+
+.harix-att-student-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.harix-att-student-number {
+  position: absolute;
+  z-index: 3;
+  top: 9px;
+  left: 9px;
+  min-width: 32px;
+  height: 30px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(15,22,35,.76);
+  color: white;
+  backdrop-filter: blur(5px);
+  font-size: 11px;
+  font-weight: 900;
 }
 
 /* =========================================================
-   STUDENT LIST
-========================================================= */
+   FULL CARD PHOTO
+   ========================================================= */
 
-.attendance-students {
+.harix-att-student-photo {
+  width: 100%;
+  aspect-ratio: 4 / 4.7;
+  min-height: 220px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #e9edf3;
+}
+
+.harix-att-student-photo-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.harix-att-student-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ha-primary);
+  background: linear-gradient(145deg,#eaf0f8,#dce6f2);
+  font-size: 64px;
+  font-weight: 900;
+}
+
+/* NAME UNDER IMAGE */
+.harix-att-student-info {
+  min-width: 0;
+  padding: 12px 4px 9px;
+}
+
+.harix-att-student-name {
+  display: block;
+  color: var(--ha-ink);
+  font-size: 15px;
+  line-height: 1.3;
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.harix-att-student-register {
+  display: block;
+  margin-top: 4px;
+  color: var(--ha-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* =========================================================
+   FOUR OPTIONS AT BOTTOM
+   ========================================================= */
+
+.harix-att-status-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 7px;
+  margin-top: auto;
+}
+
+.harix-att-status-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--ha-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ha-muted);
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .1s ease, background .15s ease, color .15s ease;
+}
+
+.harix-att-status-button:active {
+  transform: scale(.97);
+}
+
+.harix-att-status-present {
+  background: var(--ha-present) !important;
+  border-color: var(--ha-present) !important;
+  color: white !important;
+}
+
+.harix-att-status-absent {
+  background: var(--ha-absent) !important;
+  border-color: var(--ha-absent) !important;
+  color: white !important;
+}
+
+.harix-att-status-late {
+  background: var(--ha-late) !important;
+  border-color: var(--ha-late) !important;
+  color: white !important;
+}
+
+.harix-att-status-notjoined {
+  background: var(--ha-nj) !important;
+  border-color: var(--ha-nj) !important;
+  color: white !important;
+}
+
+.harix-att-late-note {
+  width: 100%;
+  height: 42px;
+  margin-top: 8px;
+  padding: 0 10px;
+  border: 1px solid #e3c37e;
+  border-radius: 9px;
+  outline: none;
+  background: #fffdf7;
+  color: var(--ha-ink);
+  font-size: 11px;
+}
+
+/* LOADING / EMPTY */
+.harix-att-loading,
+.harix-att-empty {
+  grid-column: 1 / -1;
+  padding: 55px 20px;
+  text-align: center;
+  border: 1px dashed var(--ha-line);
+  border-radius: 15px;
+  color: var(--ha-muted);
+}
+
+.harix-att-empty h3 {
+  margin: 0 0 6px;
+  color: var(--ha-ink);
+}
+
+.harix-att-empty p {
+  margin: 0;
+}
+
+/* MESSAGE */
+.harix-att-message {
+  margin-top: 15px;
+  padding: 13px 14px;
+  border: 1px solid #c9d7eb;
+  border-radius: 11px;
+  background: #edf3fb;
+  color: #2c4e7c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* SAVE */
+.harix-att-save-area {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ha-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.harix-att-save-info strong {
+  font-size: 13px;
+}
+
+.harix-att-save-info span {
+  color: var(--ha-muted);
+  font-size: 12px;
+}
+
+.harix-att-save-buttons {
+  display: flex;
+  gap: 9px;
+}
+
+.harix-att-whatsapp-button,
+.harix-att-save-button {
+  min-height: 48px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 11px;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.harix-att-whatsapp-button { background: #20c764; }
+.harix-att-save-button { background: var(--ha-primary); }
+.harix-att-whatsapp-button:disabled,
+.harix-att-save-button:disabled { opacity: .55; cursor: not-allowed; }
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+.harix-att-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.harix-att-history-header h2 {
+  margin: 0 0 4px;
+  font-size: 26px;
+}
+
+.harix-att-history-header p {
+  margin: 0;
+  color: var(--ha-muted);
+  font-size: 12px;
+}
+
+.harix-att-history-total {
+  padding: 8px 11px;
+  border-radius: 20px;
+  background: #eef2f7;
+  color: var(--ha-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.harix-att-month-group + .harix-att-month-group {
+  margin-top: 24px;
+}
+
+.harix-att-month-title {
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ha-ink);
+  font-weight: 900;
+}
+
+.harix-att-month-title small {
+  color: var(--ha-soft);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.harix-att-history-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.attendance-row {
+.harix-att-history-row {
   display: grid;
-  grid-template-columns: 28px 44px minmax(180px, 1fr) auto;
-  gap: 14px;
-  align-items: center;
-  padding: 11px 14px;
-  min-height: 68px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--paper-raised);
-  transition: box-shadow 0.15s var(--ease), border-color 0.15s var(--ease);
-  animation: row-in 0.22s var(--ease) backwards;
-}
-
-@keyframes row-in {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.attendance-row:hover {
-  box-shadow: var(--shadow-sm);
-  border-color: #c9cdd0;
-}
-
-.attendance-row.p {
-  border-color: var(--present-line);
-  background: var(--present-bg);
-}
-
-.attendance-row.a {
-  border-color: var(--absent-line);
-  background: var(--absent-bg);
-}
-
-.attendance-row.l {
-  border-color: var(--late-line);
-  background: var(--late-bg);
-}
-
-.attendance-row.nj {
-  border-color: var(--gray-line);
-  background: var(--gray-bg);
-}
-
-.student-index {
-  color: var(--ink-faint);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.student-avatar {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--r-sm);
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.student-info strong {
-  display: block;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.student-info span {
-  display: block;
-  margin-top: 3px;
-  color: var(--ink-faint);
-  font-size: 10.5px;
-}
-
-/* =========================================================
-   STATUS BUTTONS
-========================================================= */
-
-.status-buttons {
-  display: flex;
-  gap: 6px;
-}
-
-.status-buttons button {
-  min-width: 82px;
-  height: 36px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--line);
-  background: var(--paper-raised);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: 10.5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.12s var(--ease), border-color 0.12s var(--ease), background 0.12s var(--ease), color 0.12s var(--ease), box-shadow 0.12s var(--ease);
-}
-
-.status-buttons button:hover {
-  border-color: #c3c9cc;
-}
-
-.active-present {
-  border-color: var(--present) !important;
-  background: var(--present) !important;
-  color: white !important;
-  transform: rotate(-1.5deg) scale(1.03);
-  box-shadow: var(--shadow-sm);
-}
-
-.active-absent {
-  border-color: var(--absent) !important;
-  background: var(--absent) !important;
-  color: white !important;
-  transform: rotate(-1.5deg) scale(1.03);
-  box-shadow: var(--shadow-sm);
-}
-
-.active-late {
-  border-color: var(--late) !important;
-  background: var(--late) !important;
-  color: white !important;
-  transform: rotate(-1.5deg) scale(1.03);
-  box-shadow: var(--shadow-sm);
-}
-
-.active-not-joined {
-  border-color: var(--gray) !important;
-  background: var(--gray) !important;
-  color: white !important;
-  transform: rotate(-1.5deg) scale(1.03);
-  box-shadow: var(--shadow-sm);
-}
-
-.late-note {
-  grid-column: 3 / -1;
-  width: 100%;
-  height: 34px;
-  padding: 0 11px;
-  border: 1px solid var(--late-line);
-  border-radius: var(--r-sm);
-  outline: none;
-  background: var(--paper-raised);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 10.5px;
-  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
-}
-
-.late-note:focus {
-  border-color: var(--late);
-  box-shadow: 0 0 0 3px var(--late-bg);
-}
-
-/* =========================================================
-   SAVE BAR & WHATSAPP ACTION
-========================================================= */
-
-.attendance-save {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  grid-template-columns: 130px 180px 1fr auto;
   gap: 15px;
-}
-
-.attendance-save strong {
-  font-size: 12.5px;
-  color: var(--ink);
-}
-
-.attendance-save span {
-  color: var(--ink-soft);
-  font-size: 11.5px;
-}
-
-.attendance-save-actions {
-  display: flex;
   align-items: center;
-  gap: 10px;
+  padding: 13px;
+  border: 1px solid var(--ha-line);
+  border-radius: 12px;
+  background: white;
 }
 
-.whatsapp-share-button {
-  height: 44px;
-  padding: 0 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #25d366;
-  border-radius: var(--r-md);
-  background: #25d366;
-  color: white;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.12s var(--ease), background 0.12s var(--ease), opacity 0.12s var(--ease);
-}
-
-.whatsapp-share-button:hover:not(:disabled) {
-  background: #20ba59;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.whatsapp-share-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.attendance-save-actions button:last-child {
-  height: 44px;
-  padding: 0 24px;
-  border: none;
-  border-radius: var(--r-md);
-  background: var(--accent);
-  color: white;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1px;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease), background 0.12s var(--ease);
-}
-
-.attendance-save-actions button:last-child:hover:not(:disabled) {
-  background: var(--accent-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.attendance-save-actions button:last-child:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-.attendance-message {
-  margin-top: 14px;
-  padding: 12px 15px;
-  border-radius: var(--r-md);
-  background: var(--accent-bg);
-  border: 1px solid #c7d2e3;
-  color: var(--accent-dark);
-  font-size: 11.5px;
-  font-weight: 600;
-  animation: msg-in 0.2s var(--ease);
-}
-
-@keyframes msg-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-.attendance-history {
-  padding: 26px;
-  margin-bottom: 48px;
-}
-
-.history-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 22px;
-}
-
-.history-header h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 23px;
-  color: var(--ink);
-}
-
-.history-header p {
-  margin: 5px 0 0;
-  color: var(--ink-soft);
-  font-size: 11.5px;
-}
-
-.history-total {
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-
-.month-group {
-  margin-bottom: 24px;
-}
-
-.month-title {
-  margin-bottom: 9px;
-  padding-bottom: 6px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-}
-
-.month-title small {
-  color: var(--ink-faint);
-  font-family: var(--font-body);
-  font-size: 11px;
-}
-
-.history-table {
-  display: flex;
-  flex-direction: column;
-}
-
-.history-row {
-  width: 100%;
-  min-height: 58px;
-  padding: 10px 13px;
-  display: grid;
-  grid-template-columns: 140px 160px 1fr 130px;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--line-soft);
-  background: transparent;
-  transition: background 0.15s var(--ease), padding-left 0.15s var(--ease);
-}
-
-.history-table .history-row:last-child {
-  border-bottom: none;
-}
-
-.history-row:hover {
-  background: var(--paper);
-  padding-left: 17px;
-}
-
-.history-date strong {
+.harix-att-history-date strong,
+.harix-att-history-date span,
+.harix-att-history-department small {
   display: block;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink);
 }
 
-.history-date span {
-  color: var(--ink-faint);
-  font-size: 9.5px;
-}
+.harix-att-history-date strong { font-size: 13px; }
+.harix-att-history-date span,
+.harix-att-history-department small { margin-top: 3px; color: var(--ha-soft); font-size: 10px; }
 
-.history-department {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.department-pill {
-  display: inline-block;
-  width: fit-content;
-  padding: 2px 7px;
-  border-radius: 4px;
+.harix-att-department-pill {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: #e9eef6;
+  color: var(--ha-primary);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  font-weight: 900;
 }
 
-.department-pill.cs {
-  background: #e8effa;
-  color: #2b5c92;
-}
-
-.department-pill.aids {
-  background: #faede6;
-  color: #9c4b22;
-}
-
-.history-department small {
-  font-size: 10px;
-  color: var(--ink-faint);
-}
-
-.history-counts {
+.harix-att-history-counts {
   display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 12px;
+}
+
+.harix-att-history-counts > span {
+  min-width: 68px;
+  padding: 7px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 8px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 900;
 }
 
-.history-counts span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.harix-att-history-counts small { font-size: 9px; font-weight: 700; }
+.harix-att-count-present { background: var(--ha-present-bg); color: var(--ha-present); }
+.harix-att-count-absent { background: var(--ha-absent-bg); color: var(--ha-absent); }
+.harix-att-count-late { background: var(--ha-late-bg); color: var(--ha-late); }
+.harix-att-count-nj { background: var(--ha-nj-bg); color: var(--ha-nj); }
+
+.harix-att-history-holiday-label {
+  color: var(--ha-absent);
+  font-size: 12px;
+  font-weight: 900;
 }
 
-.history-counts small {
-  font-size: 9.5px;
-  font-weight: 500;
-  color: var(--ink-faint);
-}
-
-.hp {
-  color: var(--present);
-}
-
-.ha {
-  color: var(--absent);
-}
-
-.hl {
-  color: var(--late);
-}
-
-.hnj {
-  color: var(--gray);
-}
-
-.history-holiday-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--absent);
-  font-size: 10.5px;
-  font-weight: 700;
-}
-
-.history-actions {
+.harix-att-history-actions {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
   gap: 6px;
 }
 
-.history-view {
-  height: 32px;
+.harix-att-history-view,
+.harix-att-history-delete {
+  min-height: 38px;
+  border: 1px solid var(--ha-line);
+  border-radius: 9px;
+  background: white;
+  cursor: pointer;
+}
+
+.harix-att-history-view {
   padding: 0 10px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--accent);
-  background: transparent;
-  color: var(--accent);
-  font-family: inherit;
+  gap: 5px;
+  color: var(--ha-primary);
   font-size: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+  font-weight: 900;
 }
 
-.history-view:hover {
-  background: var(--accent);
-  color: white;
+.harix-att-history-delete {
+  width: 38px;
+  color: var(--ha-absent);
 }
 
-.history-delete {
-  height: 32px;
-  width: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--r-sm);
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--ink-faint);
-  cursor: pointer;
-  transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
-}
-
-.history-delete:hover {
-  background: var(--absent-bg);
-  border-color: var(--absent-line);
-  color: var(--absent);
-}
-
-.history-holiday {
-  background: linear-gradient(90deg, transparent, var(--absent-bg) 120%);
-}
-
-.history-empty {
-  padding: 50px;
+.harix-att-history-empty {
+  padding: 60px 20px;
   text-align: center;
-  color: var(--ink-faint);
-  font-size: 12.5px;
+  border: 1px dashed var(--ha-line);
+  border-radius: 15px;
+  color: var(--ha-muted);
 }
 
-/* =========================================================
-   EMPTY & LOADING STATES
-========================================================= */
-
-.attendance-loading {
-  padding: 50px;
-  text-align: center;
-  color: var(--ink-faint);
-  font-size: 12.5px;
-}
-
-.attendance-loading::after {
-  content: "";
+.harix-att-history-empty strong,
+.harix-att-history-empty span {
   display: block;
-  width: 120px;
-  height: 3px;
-  margin: 14px auto 0;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--line) 0%, var(--accent) 50%, var(--line) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.1s linear infinite;
 }
 
-@keyframes shimmer {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
+.harix-att-history-empty strong {
+  margin-top: 10px;
+  color: var(--ha-ink);
 }
 
-.attendance-empty {
-  padding: 50px;
-  text-align: center;
-  color: var(--ink-faint);
-}
-
-.attendance-empty h3 {
-  margin: 0 0 4px;
-  font-family: var(--font-display);
-  font-size: 16px;
-  color: var(--ink);
-}
-
-.attendance-empty p {
-  margin: 0;
+.harix-att-history-empty span {
+  margin-top: 5px;
   font-size: 12px;
 }
 
 /* =========================================================
-   RESPONSIVE
-========================================================= */
+   TABLET
+   ========================================================= */
 
-@media (max-width: 1100px) {
-  .attendance-summary {
-    grid-template-columns: repeat(3, 1fr);
+@media (max-width: 1200px) {
+  .harix-att-student-list {
+    grid-template-columns: repeat(3, minmax(0,1fr));
   }
 
-  .history-row {
-    grid-template-columns: 130px 140px 1fr auto;
-  }
-}
-
-@media (max-width: 900px) {
-  .attendance-page {
-    padding: 24px 20px;
-  }
-
-  .attendance-top {
+  .harix-att-controls {
     grid-template-columns: 1fr 1fr;
   }
 
-  .day-display {
+  .harix-att-day-display {
     grid-column: 1 / -1;
   }
 
-  .attendance-row {
-    grid-template-columns: 24px 42px 1fr;
+  .harix-att-summary {
+    grid-template-columns: repeat(3, minmax(0,1fr));
   }
 
-  .status-buttons {
+  .harix-att-history-row {
+    grid-template-columns: 120px 160px 1fr;
+  }
+
+  .harix-att-history-actions {
     grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .status-buttons button {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .late-note {
-    grid-column: 1 / -1;
-  }
-
-  .history-row {
-    grid-template-columns: 1fr auto;
-    row-gap: 8px;
-  }
-
-  .history-counts,
-  .history-holiday-label {
-    grid-column: 1 / -1;
+    justify-content: flex-end;
   }
 }
 
-@media (max-width: 650px) {
-  .attendance-page {
-    padding: 16px;
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .harix-att-page {
+    padding: 12px 8px 40px;
   }
 
-  .attendance-main-card,
-  .attendance-history {
-    padding: 16px;
+  .harix-att-header {
+    margin-bottom: 14px;
   }
 
-  .attendance-header h1 {
+  .harix-att-header-title {
     font-size: 30px;
   }
 
-  .attendance-top {
-    grid-template-columns: 1fr;
+  .harix-att-header-subtitle {
+    font-size: 12px;
+    line-height: 1.45;
   }
 
-  .day-display {
-    grid-column: auto;
+  .harix-att-tabs {
+    gap: 7px;
   }
 
-  .attendance-summary {
-    grid-template-columns: repeat(2, 1fr);
+  .harix-att-tab {
+    flex: 1;
+    min-height: 46px;
+    padding: 0 8px;
+    font-size: 11px;
   }
 
-  .attendance-toolbar {
+  .harix-att-main-card,
+  .harix-att-history {
+    padding: 11px;
+    border-radius: 16px;
+  }
+
+  .harix-att-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .harix-att-field-input,
+  .harix-att-field-select,
+  .harix-att-day-display {
+    height: 50px;
+  }
+
+  .harix-att-day-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .harix-att-day-buttons button {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 7px;
+    font-size: 12px;
+  }
+
+  .harix-att-toolbar {
     flex-direction: column;
   }
 
-  .attendance-search,
-  .attendance-toolbar > button {
+  .harix-att-search,
+  .harix-att-toolbar > button {
     width: 100%;
+    flex-basis: auto;
+    min-height: 50px;
   }
 
-  .student-info {
-    min-width: 0;
+  .harix-att-summary {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
   }
 
-  .student-info strong {
+  /* TWO LARGE PHOTO CARDS ON PHONE */
+  .harix-att-student-list {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 9px;
+  }
+
+  .harix-att-student-card {
+    padding: 7px;
+    border-radius: 13px;
+  }
+
+  .harix-att-student-photo {
+    min-height: 170px;
+    aspect-ratio: 4 / 4.8;
+    border-radius: 10px;
+  }
+
+  .harix-att-student-number {
+    top: 7px;
+    left: 7px;
+    min-width: 28px;
+    height: 27px;
+    font-size: 10px;
+  }
+
+  .harix-att-student-info {
+    padding: 9px 2px 8px;
+  }
+
+  .harix-att-student-name {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .harix-att-student-register {
+    font-size: 9.5px;
+    margin-top: 3px;
+  }
+
+  .harix-att-status-buttons {
+    gap: 5px;
+  }
+
+  .harix-att-status-button {
+    min-height: 43px;
+    padding: 0 2px;
+    gap: 3px;
+    border-radius: 8px;
+    font-size: 9.5px;
+  }
+
+  .harix-att-status-button svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .harix-att-late-note {
+    height: 40px;
+    font-size: 10px;
+  }
+
+  .harix-att-save-area {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .harix-att-save-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .harix-att-whatsapp-button,
+  .harix-att-save-button {
+    min-height: 50px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .harix-att-history-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .harix-att-history-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .harix-att-history-counts {
+    grid-column: 1 / -1;
+  }
+
+  .harix-att-history-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  .harix-att-history-view {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* SMALL PHONES */
+@media (max-width: 380px) {
+  .harix-att-page {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .harix-att-main-card,
+  .harix-att-history {
+    padding: 8px;
+  }
+
+  .harix-att-student-list {
+    gap: 7px;
+  }
+
+  .harix-att-student-card {
+    padding: 6px;
+  }
+
+  .harix-att-student-photo {
+    min-height: 145px;
+  }
+
+  .harix-att-student-name {
+    font-size: 12px;
+  }
+
+  .harix-att-status-button {
+    min-height: 41px;
+    font-size: 8.5px;
+  }
+
+  .harix-att-status-button svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .harix-att-save-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #harix-attendance-root * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* =========================================================
+   FINAL MOBILE OVERRIDES
+   Prevent horizontal overflow / right-shift on phones
+   ========================================================= */
+#harix-attendance-root {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+#harix-attendance-root .harix-att-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+#harix-attendance-root .harix-att-header,
+#harix-attendance-root .harix-att-tabs,
+#harix-attendance-root .harix-att-main-card,
+#harix-attendance-root .harix-att-history {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (max-width: 700px) {
+  #harix-attendance-root .harix-att-page {
+    padding: 10px 8px 32px !important;
+  }
+
+  #harix-attendance-root .harix-att-header-title {
+    font-size: 28px !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+  }
+
+  #harix-attendance-root .harix-att-header-subtitle {
+    max-width: 100% !important;
+    overflow-wrap: anywhere;
+  }
+
+  #harix-attendance-root .harix-att-tabs {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr) !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+  }
+
+  #harix-attendance-root .harix-att-tab {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 6px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .status-buttons {
-    grid-template-columns: repeat(2, 1fr);
+  #harix-attendance-root .harix-att-main-card,
+  #harix-attendance-root .harix-att-history {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
-  .attendance-save {
-    flex-direction: column;
-    align-items: stretch;
+  #harix-attendance-root .harix-att-controls {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    align-items: stretch !important;
   }
 
-  .attendance-save-actions {
-    flex-direction: column;
-    width: 100%;
+  #harix-attendance-root .harix-att-field,
+  #harix-attendance-root .harix-att-field-input,
+  #harix-attendance-root .harix-att-field-select,
+  #harix-attendance-root .harix-att-day-display {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .whatsapp-share-button,
-  .attendance-save-actions button:last-child {
-    width: 100%;
-    justify-content: center;
+  #harix-attendance-root .harix-att-day-display {
+    min-height: 50px !important;
+    height: auto !important;
+    justify-content: space-between;
   }
 
-  .history-department {
-    display: none;
+  #harix-attendance-root .harix-att-day-type {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 12px !important;
+    padding: 12px !important;
+  }
+
+  #harix-attendance-root .harix-att-day-buttons {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+
+  #harix-attendance-root .harix-att-day-buttons button {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #harix-attendance-root .harix-att-toolbar {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  #harix-attendance-root .harix-att-search,
+  #harix-attendance-root .harix-att-toolbar > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  #harix-attendance-root .harix-att-summary {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #harix-attendance-root .harix-att-summary-card {
+    min-width: 0 !important;
+  }
+
+  #harix-attendance-root .harix-att-student-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #harix-attendance-root .harix-att-student-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 6px !important;
+  }
+
+  #harix-attendance-root .harix-att-student-photo {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1.18 !important;
+  }
+
+  #harix-attendance-root .harix-att-student-info,
+  #harix-attendance-root .harix-att-status-buttons,
+  #harix-attendance-root .harix-att-late-note {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #harix-attendance-root .harix-att-student-name,
+  #harix-attendance-root .harix-att-student-register {
+    overflow-wrap: anywhere;
+  }
+
+  #harix-attendance-root .harix-att-status-button {
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  #harix-attendance-root .harix-att-save-area,
+  #harix-attendance-root .harix-att-save-buttons {
+    width: 100% !important;
+    min-width: 0 !important;
   }
 }
 
-/* =========================================================
-   PRINT
-========================================================= */
-
-@media print {
-  .attendance-page {
-    background: white;
-    padding: 0;
+@media (max-width: 380px) {
+  #harix-attendance-root .harix-att-page {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
   }
 
-  .attendance-back,
-  .attendance-tabs,
-  .day-type-section,
-  .attendance-toolbar,
-  .attendance-save,
-  .status-buttons,
-  .history-actions {
-    display: none !important;
+  #harix-attendance-root .harix-att-main-card,
+  #harix-attendance-root .harix-att-history {
+    padding: 8px !important;
   }
 
-  .attendance-main-card,
-  .attendance-history {
-    box-shadow: none;
-    border: 1px solid #ccc;
+  #harix-attendance-root .harix-att-student-list {
+    gap: 6px !important;
+  }
+
+  #harix-attendance-root .harix-att-student-card {
+    padding: 5px !important;
+  }
+
+  #harix-attendance-root .harix-att-student-name {
+    font-size: 11.5px !important;
+  }
+
+  #harix-attendance-root .harix-att-status-button {
+    min-height: 40px !important;
+    font-size: 8.5px !important;
   }
 }

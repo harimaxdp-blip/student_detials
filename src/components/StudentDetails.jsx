@@ -74,7 +74,13 @@ import {
   Check,
   Ban,
   UserCheck,
-  ChevronDown,
+  FileSpreadsheet,
+  FileType,
+  Filter,
+  CheckSquare,
+  Square,
+  SlidersHorizontal,
+  Calendar,
 } from "lucide-react";
 
 const STATUS = {
@@ -82,6 +88,33 @@ const STATUS = {
   ABSENT: "a",
   LATE: "l",
 };
+
+// Available Fields Configuration for Custom Export with dedicated icons
+const EXPORT_AVAILABLE_FIELDS = [
+  { id: "sNo", label: "S.No", icon: Hash, defaultChecked: true },
+  { id: "fullName", label: "Full Name", icon: UserRound, defaultChecked: true },
+  { id: "regNo", label: "Register Number", icon: Hash, defaultChecked: true },
+  { id: "course", label: "Course / Dept", icon: GraduationCap, defaultChecked: true },
+  { id: "studyMode", label: "Study Mode", icon: Home, defaultChecked: false },
+  { id: "studentMobile", label: "Student Mobile", icon: Phone, defaultChecked: true },
+  { id: "studentEmail", label: "Student Email", icon: Mail, defaultChecked: false },
+  { id: "gender", label: "Gender", icon: VenusAndMars, defaultChecked: false },
+  { id: "dob", label: "Date of Birth", icon: CalendarDays, defaultChecked: false },
+  { id: "bloodGroup", label: "Blood Group", icon: Droplets, defaultChecked: false },
+  { id: "joiningDate", label: "Date of Joining", icon: CalendarDays, defaultChecked: true },
+  { id: "fatherName", label: "Father Name", icon: UserCheck, defaultChecked: true },
+  { id: "fatherMobile", label: "Father Mobile", icon: PhoneCall, defaultChecked: true },
+  { id: "motherName", label: "Mother Name", icon: Heart, defaultChecked: false },
+  { id: "motherMobile", label: "Mother Mobile", icon: PhoneCall, defaultChecked: true },
+  { id: "guardianName", label: "Guardian Name", icon: Contact, defaultChecked: false },
+  { id: "guardianMobile", label: "Guardian Mobile", icon: PhoneCall, defaultChecked: false },
+  { id: "address", label: "Address & Pincode", icon: MapPin, defaultChecked: false },
+  { id: "workingDays", label: "Working Days", icon: Clock3, defaultChecked: false },
+  { id: "presentDays", label: "Present Days", icon: Check, defaultChecked: false },
+  { id: "absentDays", label: "Absent Days", icon: Ban, defaultChecked: false },
+  { id: "lateDays", label: "Late Days", icon: Clock3, defaultChecked: false },
+  { id: "attendancePct", label: "Attendance %", icon: Percent, defaultChecked: true },
+];
 
 const getDateString = (value) => {
   if (!value) return "";
@@ -140,9 +173,29 @@ function StudentDetails() {
   const [courseFilter, setCourseFilter] = useState("all");
   const [attendanceOrder, setAttendanceOrder] = useState("none");
 
-  // Export dropdown state
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const exportDropdownRef = useRef(null);
+  // Joining Date Filter States on Page Toolbar
+  const [joiningDateFilterType, setJoiningDateFilterType] = useState("all");
+  const [joiningDateCutoff, setJoiningDateCutoff] = useState("2026-09-01");
+  const [joiningDateEnd, setJoiningDateEnd] = useState("");
+
+  // Custom Export Modal State
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportScope, setExportScope] = useState("filtered"); // 'filtered' | 'all'
+  const [exportFormat, setExportFormat] = useState("xlsx"); // 'xlsx' | 'pdf' | 'docx'
+
+  // MODAL-SPECIFIC FILTERS (Department & Joining Month Filters inside the Modal)
+  const [exportDeptFilter, setExportDeptFilter] = useState("all");
+  const [exportJoinFilterType, setExportJoinFilterType] = useState("all"); // 'all' | 'exact-month' | 'before-month' | 'after-month' | 'range'
+  const [exportJoinMonth, setExportJoinMonth] = useState(
+    new Date().toISOString().slice(0, 7) // 'YYYY-MM'
+  );
+  const [exportJoinRangeStart, setExportJoinRangeStart] = useState("");
+  const [exportJoinRangeEnd, setExportJoinRangeEnd] = useState("");
+
+  const [selectedFields, setSelectedFields] = useState(() =>
+    EXPORT_AVAILABLE_FIELDS.filter((f) => f.defaultChecked).map((f) => f.id)
+  );
+  const [exportingInProgress, setExportingInProgress] = useState(false);
 
   // Flipped card (ID tracking)
   const [openId, setOpenId] = useState(null);
@@ -155,20 +208,6 @@ function StudentDetails() {
   // Edit Modal State
   const [editingStudent, setEditingStudent] = useState(null);
   const [saving, setSaving] = useState(false);
-
-  // Close export menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        exportDropdownRef.current &&
-        !exportDropdownRef.current.contains(event.target)
-      ) {
-        setShowExportMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const studentsRef = collection(db, "students");
@@ -343,6 +382,7 @@ function StudentDetails() {
       const course = String(student.course || "").toLowerCase();
       const gender = String(student.gender || "").toLowerCase();
 
+      // 1. Text Search Filter
       const matchesSearch =
         !searchText ||
         name.includes(searchText) ||
@@ -351,13 +391,26 @@ function StudentDetails() {
         course.includes(searchText) ||
         gender.includes(searchText);
 
+      // 2. Gender & Course Filter
       const matchesGender =
         genderFilter === "all" || student.gender === genderFilter;
 
       const matchesCourse =
         courseFilter === "all" || student.course === courseFilter;
 
-      return matchesSearch && matchesGender && matchesCourse;
+      // 3. Joining Date Filter
+      const doj = getJoiningDate(student);
+      let matchesDate = true;
+
+      if (joiningDateFilterType === "before" && joiningDateCutoff) {
+        matchesDate = Boolean(doj && doj < joiningDateCutoff);
+      } else if (joiningDateFilterType === "after" && joiningDateCutoff) {
+        matchesDate = Boolean(doj && doj >= joiningDateCutoff);
+      } else if (joiningDateFilterType === "range" && joiningDateCutoff && joiningDateEnd) {
+        matchesDate = Boolean(doj && doj >= joiningDateCutoff && doj <= joiningDateEnd);
+      }
+
+      return matchesSearch && matchesGender && matchesCourse && matchesDate;
     });
 
     if (attendanceOrder !== "none") {
@@ -381,262 +434,318 @@ function StudentDetails() {
     genderFilter,
     courseFilter,
     attendanceOrder,
+    joiningDateFilterType,
+    joiningDateCutoff,
+    joiningDateEnd,
   ]);
 
-  // ================= EXPORT FUNCTIONS =================
+  // ================= MODAL DYNAMIC FILTER LOGIC =================
+  const finalExportList = useMemo(() => {
+    const baseList = exportScope === "all" ? students : filteredStudents;
 
-  const getExportRawRows = () => {
-    return filteredStudents.map((student, index) => {
-      const stat = computedAttendance[student.id] || { percentage: 0 };
-      const fullAddress = [student.address, student.pincode]
-        .filter(Boolean)
-        .join(" - ");
+    return baseList.filter((student) => {
+      // 1. Department Filter
+      const depKey = getDepartmentKey(student);
+      if (exportDeptFilter === "cs" && depKey !== "cs") return false;
+      if (exportDeptFilter === "aids" && depKey !== "aids") return false;
 
-      return {
-        sNo: index + 1,
-        name: student.fullName || "—",
-        regNo: student.regNo || student.rollNo || student.id?.slice(0, 8) || "—",
-        dept: student.course || student.department || "—",
-        mode: student.studyMode === "hybrid" || student.isHybrid ? "Hybrid" : "Regular",
-        mobile: student.studentMobile || student.mobile || "—",
-        fatherName: student.fatherName || "—",
-        fatherMobile: student.fatherMobile || "—",
-        motherName: student.motherName || "—",
-        motherMobile: student.motherMobile || "—",
-        guardianMobile: student.guardianMobile || "—",
-        attendance: `${stat.percentage}%`,
-        address: fullAddress || "—",
-      };
+      // 2. Joining Month / Date Filter
+      const doj = getJoiningDate(student); // 'YYYY-MM-DD'
+      if (exportJoinFilterType !== "all") {
+        if (!doj) return false;
+        const studentMonth = doj.slice(0, 7); // 'YYYY-MM'
+
+        if (exportJoinFilterType === "exact-month") {
+          if (studentMonth !== exportJoinMonth) return false;
+        } else if (exportJoinFilterType === "before-month") {
+          if (studentMonth >= exportJoinMonth) return false;
+        } else if (exportJoinFilterType === "after-month") {
+          if (studentMonth <= exportJoinMonth) return false;
+        } else if (exportJoinFilterType === "range") {
+          if (exportJoinRangeStart && doj < exportJoinRangeStart) return false;
+          if (exportJoinRangeEnd && doj > exportJoinRangeEnd) return false;
+        }
+      }
+
+      return true;
     });
+  }, [
+    students,
+    filteredStudents,
+    exportScope,
+    exportDeptFilter,
+    exportJoinFilterType,
+    exportJoinMonth,
+    exportJoinRangeStart,
+    exportJoinRangeEnd,
+  ]);
+
+  // ================= DYNAMIC FIELD VALUE RESOLVER =================
+  const getStudentFieldValue = (student, fieldId, index) => {
+    const stat = computedAttendance[student.id] || {
+      workingDays: 0,
+      presentDays: 0,
+      absentDays: 0,
+      lateDays: 0,
+      percentage: 0,
+    };
+
+    switch (fieldId) {
+      case "sNo":
+        return index + 1;
+      case "fullName":
+        return (student.fullName || "—").toUpperCase();
+      case "regNo":
+        return student.regNo || student.rollNo || "—";
+      case "course":
+        return student.course || student.department || "—";
+      case "studyMode":
+        return student.studyMode === "hybrid" || student.isHybrid
+          ? "Hybrid"
+          : "Regular";
+      case "studentMobile":
+        return student.studentMobile || student.mobile || "—";
+      case "studentEmail":
+        return student.studentEmail || student.email || "—";
+      case "gender":
+        return student.gender || "—";
+      case "dob":
+        return student.dob || "—";
+      case "bloodGroup":
+        return student.bloodGroup || "—";
+      case "joiningDate":
+        return getJoiningDate(student) || "—";
+      case "fatherName":
+        return (student.fatherName || "—").toUpperCase();
+      case "fatherMobile":
+        return student.fatherMobile || "—";
+      case "motherName":
+        return (student.motherName || "—").toUpperCase();
+      case "motherMobile":
+        return student.motherMobile || "—";
+      case "guardianName":
+        return (student.guardianName || "—").toUpperCase();
+      case "guardianMobile":
+        return student.guardianMobile || "—";
+      case "address":
+        return [student.address, student.pincode].filter(Boolean).join(" - ") || "—";
+      case "workingDays":
+        return stat.workingDays;
+      case "presentDays":
+        return stat.presentDays;
+      case "absentDays":
+        return stat.absentDays;
+      case "lateDays":
+        return stat.lateDays;
+      case "attendancePct":
+        return `${stat.percentage}%`;
+      default:
+        return "—";
+    }
   };
 
-  // 1. Export Excel (.xlsx)
-  const exportToExcel = (mode = "all") => {
-    if (!filteredStudents.length) {
-      alert("No student records to export.");
-      return;
+  const handleSelectPreset = (preset) => {
+    if (preset === "all") {
+      setSelectedFields(EXPORT_AVAILABLE_FIELDS.map((f) => f.id));
+    } else if (preset === "none") {
+      setSelectedFields(["sNo", "fullName"]);
+    } else if (preset === "academic") {
+      setSelectedFields([
+        "sNo",
+        "regNo",
+        "fullName",
+        "course",
+        "studyMode",
+        "joiningDate",
+        "studentMobile",
+        "workingDays",
+        "presentDays",
+        "absentDays",
+        "attendancePct",
+      ]);
+    } else if (preset === "parents") {
+      setSelectedFields([
+        "sNo",
+        "fullName",
+        "regNo",
+        "course",
+        "studentMobile",
+        "fatherName",
+        "fatherMobile",
+        "motherName",
+        "motherMobile",
+        "guardianMobile",
+        "address",
+      ]);
     }
-
-    const rows = getExportRawRows();
-    let dataToExport = [];
-    let colWidths = [];
-    let filename = `Student_Records_${new Date().toISOString().slice(0, 10)}.xlsx`;
-
-    if (mode === "parents") {
-      filename = `Parent_Emergency_Contacts_${new Date().toISOString().slice(0, 10)}.xlsx`;
-      dataToExport = rows.map((r) => ({
-        "S.NO": r.sNo,
-        "STUDENT NAME": r.name,
-        "REG NO": r.regNo,
-        "DEPT": r.dept,
-        "STUDENT MOBILE": r.mobile,
-        "FATHER NAME": r.fatherName,
-        "FATHER MOBILE": r.fatherMobile,
-        "MOTHER NAME": r.motherName,
-        "MOTHER MOBILE": r.motherMobile,
-        "GUARDIAN MOBILE": r.guardianMobile,
-        "ADDRESS": r.address,
-      }));
-      colWidths = [
-        { wch: 6 },
-        { wch: 22 },
-        { wch: 14 },
-        { wch: 24 },
-        { wch: 16 },
-        { wch: 20 },
-        { wch: 16 },
-        { wch: 20 },
-        { wch: 16 },
-        { wch: 16 },
-        { wch: 34 },
-      ];
-    } else {
-      dataToExport = rows.map((r) => ({
-        "S.NO": r.sNo,
-        "STUDENT NAME": r.name,
-        "REG NO": r.regNo,
-        "DEPT": r.dept,
-        "STUDY MODE": r.mode,
-        "STUDENT MOBILE": r.mobile,
-        "FATHER NAME": r.fatherName,
-        "FATHER MOBILE": r.fatherMobile,
-        "MOTHER NAME": r.motherName,
-        "MOTHER MOBILE": r.motherMobile,
-        "ATTENDANCE": r.attendance,
-        "ADDRESS": r.address,
-      }));
-      colWidths = [
-        { wch: 6 },
-        { wch: 22 },
-        { wch: 14 },
-        { wch: 24 },
-        { wch: 12 },
-        { wch: 16 },
-        { wch: 18 },
-        { wch: 16 },
-        { wch: 18 },
-        { wch: 16 },
-        { wch: 14 },
-        { wch: 34 },
-      ];
-    }
-
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    worksheet["!cols"] = colWidths;
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-    XLSX.writeFile(workbook, filename);
-    setShowExportMenu(false);
   };
 
-  // 2. Export PDF (.pdf)
-  const exportToPDF = (mode = "all") => {
-    if (!filteredStudents.length) {
-      alert("No student records to export.");
-      return;
-    }
-
-    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
-    const rows = getExportRawRows();
-    const dateStr = new Date().toLocaleDateString("en-IN");
-
-    doc.setFontSize(16);
-    doc.text(
-      mode === "parents" ? "Parent & Contact Directory" : "Student Academic & Contact Records",
-      40,
-      35
+  const toggleFieldSelection = (fieldId) => {
+    setSelectedFields((prev) =>
+      prev.includes(fieldId)
+        ? prev.filter((id) => id !== fieldId)
+        : [...prev, fieldId]
     );
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Generated: ${dateStr} | Total Records: ${filteredStudents.length}`, 40, 50);
-
-    let headers = [];
-    let body = [];
-
-    if (mode === "parents") {
-      headers = [
-        ["#", "Student Name", "Reg No", "Dept", "Student Mobile", "Father Name", "Father Mobile", "Mother Mobile", "Address"],
-      ];
-      body = rows.map((r) => [
-        r.sNo,
-        r.name,
-        r.regNo,
-        r.dept,
-        r.mobile,
-        r.fatherName,
-        r.fatherMobile,
-        r.motherMobile,
-        r.address,
-      ]);
-    } else {
-      headers = [
-        ["#", "Student Name", "Reg No", "Dept", "Mode", "Mobile", "Father Mob", "Mother Mob", "Attd %", "Address"],
-      ];
-      body = rows.map((r) => [
-        r.sNo,
-        r.name,
-        r.regNo,
-        r.dept,
-        r.mode,
-        r.mobile,
-        r.fatherMobile,
-        r.motherMobile,
-        r.attendance,
-        r.address,
-      ]);
-    }
-
-    autoTable(doc, {
-      startY: 65,
-      head: headers,
-      body: body,
-      theme: "grid",
-      headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: "bold" },
-      styles: { fontSize: 8, cellPadding: 4 },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-    });
-
-    doc.save(`${mode === "parents" ? "Parent_Directory" : "Student_Records"}_${new Date().toISOString().slice(0, 10)}.pdf`);
-    setShowExportMenu(false);
   };
 
-  // 3. Export Word (.docx)
-  const exportToWord = async (mode = "all") => {
-    if (!filteredStudents.length) {
-      alert("No student records to export.");
+  // Run the download for selected fields
+  const executeCustomExport = async () => {
+    if (selectedFields.length === 0) {
+      alert("Please select at least one column to export.");
       return;
     }
 
-    const rows = getExportRawRows();
-    const headers =
-      mode === "parents"
-        ? ["S.No", "Student Name", "Dept", "Student Mobile", "Father Name", "Father Mobile", "Mother Mobile"]
-        : ["S.No", "Student Name", "Dept", "Student Mobile", "Father Mobile", "Mother Mobile", "Attd %"];
+    if (!finalExportList.length) {
+      alert("No student records matched your export filter criteria.");
+      return;
+    }
 
-    const tableHeaderRow = new TableRow({
-      tableHeader: true,
-      children: headers.map(
-        (title) =>
-          new TableCell({
-            children: [
-              new Paragraph({
-                children: [new TextRun({ text: title, bold: true, color: "FFFFFF" })],
-              }),
-            ],
-            shading: { fill: "2980B9" },
-          })
-      ),
-    });
+    setExportingInProgress(true);
+    const today = new Date().toISOString().slice(0, 10);
+    const activeHeaders = EXPORT_AVAILABLE_FIELDS.filter((f) =>
+      selectedFields.includes(f.id)
+    );
 
-    const tableDataRows = rows.map(
-      (r) =>
-        new TableRow({
-          children: (mode === "parents"
-            ? [r.sNo, r.name, r.dept, r.mobile, r.fatherName, r.fatherMobile, r.motherMobile]
-            : [r.sNo, r.name, r.dept, r.mobile, r.fatherMobile, r.motherMobile, r.attendance]
-          ).map(
-            (val) =>
+    try {
+      // 1. EXCEL EXPORT
+      if (exportFormat === "xlsx") {
+        const rows = finalExportList.map((st, idx) => {
+          const rowObj = {};
+          activeHeaders.forEach((h) => {
+            rowObj[h.label] = getStudentFieldValue(st, h.id, idx);
+          });
+          return rowObj;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(rows);
+        worksheet["!cols"] = activeHeaders.map((h) => {
+          let maxLen = h.label.length;
+          rows.forEach((r) => {
+            maxLen = Math.max(maxLen, String(r[h.label] ?? "").length);
+          });
+          return { wch: Math.min(Math.max(maxLen + 3, 10), 45) };
+        });
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Student Export");
+        XLSX.writeFile(workbook, `Student_Export_${today}.xlsx`);
+      }
+
+      // 2. PDF EXPORT
+      else if (exportFormat === "pdf") {
+        const orientation = activeHeaders.length > 6 ? "landscape" : "portrait";
+        const doc = new jsPDF({ orientation, unit: "pt", format: "a4" });
+        const dateStr = new Date().toLocaleDateString("en-IN");
+
+        doc.setFontSize(15);
+        doc.text("Student Custom Data Report", 40, 35);
+        doc.setFontSize(9);
+        doc.setTextColor(100);
+        doc.text(
+          `Generated: ${dateStr} | Matched Records: ${finalExportList.length} | Columns: ${activeHeaders.length}`,
+          40,
+          50
+        );
+
+        const head = [activeHeaders.map((h) => h.label)];
+        const body = finalExportList.map((st, idx) =>
+          activeHeaders.map((h) => String(getStudentFieldValue(st, h.id, idx)))
+        );
+
+        autoTable(doc, {
+          startY: 65,
+          head,
+          body,
+          theme: "grid",
+          headStyles: {
+            fillColor: [30, 58, 138],
+            textColor: 255,
+            fontStyle: "bold",
+          },
+          styles: { fontSize: activeHeaders.length > 8 ? 7 : 8, cellPadding: 4 },
+          alternateRowStyles: { fillColor: [248, 250, 252] },
+        });
+
+        doc.save(`Student_Export_${today}.pdf`);
+      }
+
+      // 3. WORD EXPORT (.docx)
+      else if (exportFormat === "docx") {
+        const tableHeaderRow = new TableRow({
+          tableHeader: true,
+          children: activeHeaders.map(
+            (h) =>
               new TableCell({
-                children: [new Paragraph(String(val || "—"))],
+                children: [
+                  new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    children: [
+                      new TextRun({ text: h.label, bold: true, color: "FFFFFF" }),
+                    ],
+                  }),
+                ],
+                shading: { fill: "1E3A8A" },
               })
           ),
-        })
-    );
+        });
 
-    const docxDocument = new Document({
-      sections: [
-        {
-          children: [
-            new Paragraph({
-              text: mode === "parents" ? "Student & Parent Contact Directory" : "Student Records & Attendance Report",
-              heading: HeadingLevel.HEADING_1,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: `Generated on: ${new Date().toLocaleDateString("en-IN")} | Total Records: ${filteredStudents.length}`,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({ text: "" }),
-            new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              rows: [tableHeaderRow, ...tableDataRows],
-            }),
+        const tableDataRows = finalExportList.map(
+          (st, idx) =>
+            new TableRow({
+              children: activeHeaders.map(
+                (h) =>
+                  new TableCell({
+                    children: [
+                      new Paragraph(
+                        String(getStudentFieldValue(st, h.id, idx))
+                      ),
+                    ],
+                  })
+              ),
+            })
+        );
+
+        const docxDocument = new Document({
+          sections: [
+            {
+              children: [
+                new Paragraph({
+                  text: "Custom Student Directory & Records",
+                  heading: HeadingLevel.HEADING_1,
+                  alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({
+                  text: `Generated on: ${new Date().toLocaleDateString("en-IN")} | Total Records: ${finalExportList.length}`,
+                  alignment: AlignmentType.CENTER,
+                }),
+                new Paragraph({ text: "" }),
+                new Table({
+                  width: { size: 100, type: WidthType.PERCENTAGE },
+                  rows: [tableHeaderRow, ...tableDataRows],
+                }),
+              ],
+            },
           ],
-        },
-      ],
-    });
+        });
 
-    const blob = await Packer.toBlob(docxDocument);
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${mode === "parents" ? "Parent_Directory" : "Student_Report"}_${new Date().toISOString().slice(0, 10)}.docx`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    setShowExportMenu(false);
+        const blob = await Packer.toBlob(docxDocument);
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `Student_Export_${today}.docx`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      setShowExportModal(false);
+    } catch (err) {
+      console.error("Export failed:", err);
+      alert(`Export error: ${err.message}`);
+    } finally {
+      setExportingInProgress(false);
+    }
   };
 
   // ================= CARD & MODAL HANDLERS =================
-
   const toggleStudent = (e, studentId) => {
     if (e && e.stopPropagation) e.stopPropagation();
     setOpenId((currentId) => (currentId === studentId ? null : studentId));
@@ -714,6 +823,7 @@ function StudentDetails() {
     if (e && e.stopPropagation) e.stopPropagation();
     setEditingStudent({
       ...student,
+      regNo: student.regNo || student.rollNo || "",
       joiningDate: getJoiningDate(student),
       studyMode:
         student.studyMode ||
@@ -777,6 +887,7 @@ function StudentDetails() {
 
       await updateDoc(studentRef, {
         fullName: editingStudent.fullName?.trim() || "",
+        regNo: editingStudent.regNo?.trim() || "",
         dob: editingStudent.dob || "",
         gender: editingStudent.gender || "",
         bloodGroup: editingStudent.bloodGroup || "",
@@ -834,6 +945,9 @@ function StudentDetails() {
     setGenderFilter("all");
     setCourseFilter("all");
     setAttendanceOrder("none");
+    setJoiningDateFilterType("all");
+    setJoiningDateCutoff("2026-09-01");
+    setJoiningDateEnd("");
   };
 
   return (
@@ -933,6 +1047,43 @@ function StudentDetails() {
             </select>
           </div>
 
+          {/* JOINING DATE FILTER SELECT */}
+          <div className="select-control">
+            <CalendarDays size={14} />
+            <select
+              value={joiningDateFilterType}
+              onChange={(e) => setJoiningDateFilterType(e.target.value)}
+              aria-label="Filter by joining date"
+            >
+              <option value="all">All Joining Dates</option>
+              <option value="before">Joined Before</option>
+              <option value="after">Joined After</option>
+              <option value="range">Date Range</option>
+            </select>
+          </div>
+
+          {joiningDateFilterType !== "all" && (
+            <div className="date-filter-inputs">
+              <input
+                type="date"
+                value={joiningDateCutoff}
+                onChange={(e) => setJoiningDateCutoff(e.target.value)}
+                className="toolbar-date-input"
+              />
+              {joiningDateFilterType === "range" && (
+                <>
+                  <span className="date-range-sep">to</span>
+                  <input
+                    type="date"
+                    value={joiningDateEnd}
+                    onChange={(e) => setJoiningDateEnd(e.target.value)}
+                    className="toolbar-date-input"
+                  />
+                </>
+              )}
+            </div>
+          )}
+
           <div className="select-control">
             <Percent size={14} />
             <select
@@ -949,7 +1100,8 @@ function StudentDetails() {
           {(search ||
             genderFilter !== "all" ||
             courseFilter !== "all" ||
-            attendanceOrder !== "none") && (
+            attendanceOrder !== "none" ||
+            joiningDateFilterType !== "all") && (
             <button
               type="button"
               className="reset-filter"
@@ -959,63 +1111,15 @@ function StudentDetails() {
             </button>
           )}
 
-          {/* MULTI-FORMAT EXPORT DROPDOWN */}
-          <div className="export-dropdown-wrapper" ref={exportDropdownRef}>
-            <button
-              type="button"
-              className="export-btn"
-              onClick={() => setShowExportMenu((prev) => !prev)}
-              title="Choose export format"
-            >
-              <Download size={15} /> Export <ChevronDown size={13} />
-            </button>
-
-            {showExportMenu && (
-              <div className="export-menu-dropdown">
-                <div className="export-group-title">Excel (.xlsx)</div>
-                <button
-                  type="button"
-                  onClick={() => exportToExcel("all")}
-                >
-                  <FileText size={14} className="icon-excel" /> Complete Records (Excel)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => exportToExcel("parents")}
-                >
-                  <PhoneCall size={14} className="icon-excel" /> Parents & Contacts (Excel)
-                </button>
-
-                <div className="export-divider" />
-
-                <div className="export-group-title">Document Formats</div>
-                <button
-                  type="button"
-                  onClick={() => exportToPDF("all")}
-                >
-                  <Download size={14} className="icon-pdf" /> Student Roster (PDF)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => exportToPDF("parents")}
-                >
-                  <PhoneCall size={14} className="icon-pdf" /> Parents Directory (PDF)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => exportToWord("all")}
-                >
-                  <FileText size={14} className="icon-word" /> Full Report (Word .docx)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => exportToWord("parents")}
-                >
-                  <PhoneCall size={14} className="icon-word" /> Parent Contacts (Word .docx)
-                </button>
-              </div>
-            )}
-          </div>
+          {/* DIRECT CUSTOM EXPORT BUTTON */}
+          <button
+            type="button"
+            className="export-btn"
+            onClick={() => setShowExportModal(true)}
+            title="Configure and download custom export"
+          >
+            <Download size={15} /> Export Details
+          </button>
         </div>
       </div>
 
@@ -1090,7 +1194,10 @@ function StudentDetails() {
                         {student.imageUrl && !imageError[student.id] ? (
                           <>
                             {imageLoading[student.id] !== false && (
-                              <div className="image-loading-overlay" aria-label="Loading student photo">
+                              <div
+                                className="image-loading-overlay"
+                                aria-label="Loading student photo"
+                              >
                                 <div className="image-loading-spinner">
                                   <Loader2 size={25} />
                                 </div>
@@ -1098,7 +1205,11 @@ function StudentDetails() {
                               </div>
                             )}
                             <img
-                              className={`student-photo ${imageLoading[student.id] !== false ? "is-loading" : "is-loaded"}`}
+                              className={`student-photo ${
+                                imageLoading[student.id] !== false
+                                  ? "is-loading"
+                                  : "is-loaded"
+                              }`}
                               src={student.imageUrl}
                               alt={student.fullName || "Student"}
                               onLoad={() => handleImageLoad(student.id)}
@@ -1110,7 +1221,11 @@ function StudentDetails() {
                         ) : (
                           <div className="photo-hero-placeholder">
                             <User size={38} />
-                            <span>{student.imageUrl ? "Photo unavailable" : "No photo on file"}</span>
+                            <span>
+                              {student.imageUrl
+                                ? "Photo unavailable"
+                                : "No photo on file"}
+                            </span>
                           </div>
                         )}
 
@@ -1146,7 +1261,6 @@ function StudentDetails() {
 
                         {/* 4-COLUMN ALIGNED STRIP */}
                         <div className="student-summary-strip">
-                          {/* 1. Mobile */}
                           <div className="summary-item">
                             <span className="summary-lbl">
                               <Phone size={10} aria-hidden="true" />
@@ -1166,7 +1280,6 @@ function StudentDetails() {
                             </span>
                           </div>
 
-                          {/* 2. Mode */}
                           <div className="summary-item">
                             <span className="summary-lbl">
                               <Home size={10} />
@@ -1177,7 +1290,6 @@ function StudentDetails() {
                             </span>
                           </div>
 
-                          {/* 3. Working */}
                           <div className="summary-item">
                             <span className="summary-lbl">
                               <Clock3 size={10} />
@@ -1188,7 +1300,6 @@ function StudentDetails() {
                             </span>
                           </div>
 
-                          {/* 4. Attd */}
                           <div className="summary-item">
                             <span className="summary-lbl">
                               <Percent size={10} />
@@ -1234,7 +1345,9 @@ function StudentDetails() {
                         <div className="back-topbar">
                           <button
                             type="button"
-                            className={`back-return-btn ${returningId === student.id ? "is-returning" : ""}`}
+                            className={`back-return-btn ${
+                              returningId === student.id ? "is-returning" : ""
+                            }`}
                             onClick={(e) => handleReturnToPhoto(e, student.id)}
                             aria-label="Return to student photo"
                             title="Return to photo"
@@ -1242,71 +1355,117 @@ function StudentDetails() {
                             <ArrowLeft size={14} />
                             <span>Return to Photo</span>
                           </button>
-                          <span className="back-record-pill"><Hash size={11} /> ID: {student.id.slice(0, 8)}</span>
+                          <span className="back-record-pill">
+                            <Hash size={11} /> ID: {student.id.slice(0, 8)}
+                          </span>
                         </div>
 
                         <div className="back-hero-title">
                           <h3>{student.fullName || "Student Details"}</h3>
-                          <p><GraduationCap size={12} /> {student.course || "General Profile"}</p>
+                          <p>
+                            <GraduationCap size={12} />{" "}
+                            {student.course || "General Profile"}
+                          </p>
                         </div>
                       </div>
 
                       <div className="back-inner">
-                        {/* Attendance Mini Stats */}
                         <div className="detail-card-panel">
-                          <span className="panel-tag"><Percent size={13} /> <span>Cloud Attendance</span></span>
+                          <span className="panel-tag">
+                            <Percent size={13} /> <span>Cloud Attendance</span>
+                          </span>
                           <div className="attendance-mini-stats">
                             <div className="stat-pill">
-                              <span className="pill-val">{stat.workingDays}</span>
-                              <span className="pill-lbl"><Clock3 size={10} /> Working</span>
+                              <span className="pill-val">
+                                {stat.workingDays}
+                              </span>
+                              <span className="pill-lbl">
+                                <Clock3 size={10} /> Working
+                              </span>
                             </div>
                             <div className="stat-pill">
-                              <span className="pill-val text-green">{stat.presentDays}</span>
-                              <span className="pill-lbl"><Check size={10} /> Present</span>
+                              <span className="pill-val text-green">
+                                {stat.presentDays}
+                              </span>
+                              <span className="pill-lbl">
+                                <Check size={10} /> Present
+                              </span>
                             </div>
                             <div className="stat-pill">
-                              <span className="pill-val text-red">{stat.absentDays}</span>
-                              <span className="pill-lbl"><Ban size={10} /> Absent</span>
+                              <span className="pill-val text-red">
+                                {stat.absentDays}
+                              </span>
+                              <span className="pill-lbl">
+                                <Ban size={10} /> Absent
+                              </span>
                             </div>
                             <div className="stat-pill">
-                              <span className="pill-val text-yellow">{stat.lateDays}</span>
-                              <span className="pill-lbl"><Clock3 size={10} /> Late</span>
+                              <span className="pill-val text-yellow">
+                                {stat.lateDays}
+                              </span>
+                              <span className="pill-lbl">
+                                <Clock3 size={10} /> Late
+                              </span>
                             </div>
                           </div>
                         </div>
 
-                        {/* Student Information */}
                         <div className="detail-card-panel">
-                          <span className="panel-tag"><UserRound size={13} /> <span>Student Information</span></span>
+                          <span className="panel-tag">
+                            <UserRound size={13} />{" "}
+                            <span>Student Information</span>
+                          </span>
                           <dl className="info-grid">
                             <div>
-                              <dt><CalendarDays size={11} /> DOB</dt>
+                              <dt>
+                                <CalendarDays size={11} /> DOB
+                              </dt>
                               <dd>{student.dob || "—"}</dd>
                             </div>
                             <div>
-                              <dt><VenusAndMars size={11} /> Gender</dt>
+                              <dt>
+                                <VenusAndMars size={11} /> Gender
+                              </dt>
                               <dd>{student.gender || "—"}</dd>
                             </div>
                             <div>
-                              <dt><Droplets size={11} /> Blood Group</dt>
-                              <dd className="badge-bg">{student.bloodGroup || "—"}</dd>
+                              <dt>
+                                <Droplets size={11} /> Blood Group
+                              </dt>
+                              <dd className="badge-bg">
+                                {student.bloodGroup || "—"}
+                              </dd>
                             </div>
                             <div>
-                              <dt><CalendarDays size={11} /> Joined On</dt>
-                              <dd>{student.joiningDate ? formatDate(student.joiningDate) : "—"}</dd>
+                              <dt>
+                                <CalendarDays size={11} /> Joined On
+                              </dt>
+                              <dd>
+                                {student.joiningDate
+                                  ? formatDate(student.joiningDate)
+                                  : "—"}
+                              </dd>
                             </div>
                           </dl>
                         </div>
 
-                        {/* Contact & Family (Includes all parent numbers) */}
                         <div className="detail-card-panel">
-                          <span className="panel-tag"><UsersRound size={13} /> <span>Contact & Family</span></span>
+                          <span className="panel-tag">
+                            <UsersRound size={13} />{" "}
+                            <span>Contact & Family</span>
+                          </span>
                           <dl className="info-grid">
                             <div>
-                              <dt><Phone size={11} /> Mobile</dt>
+                              <dt>
+                                <Phone size={11} /> Mobile
+                              </dt>
                               <dd className="phone-value">
-                                <a 
-                                  href={student.studentMobile ? `tel:${String(student.studentMobile).replace(/\D/g, "")}` : undefined}
+                                <a
+                                  href={
+                                    student.studentMobile
+                                      ? `tel:${String(student.studentMobile).replace(/\D/g, "")}`
+                                      : undefined
+                                  }
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   {formatPhone(student.studentMobile)}
@@ -1314,15 +1473,22 @@ function StudentDetails() {
                               </dd>
                             </div>
                             <div>
-                              <dt><Mail size={11} /> Email</dt>
-                              <dd className="email-value">{student.studentEmail || "—"}</dd>
+                              <dt>
+                                <Mail size={11} /> Email
+                              </dt>
+                              <dd className="email-value">
+                                {student.studentEmail || "—"}
+                              </dd>
                             </div>
 
-                            {/* Father Block */}
                             <div className="parent-detail-block">
-                              <dt><UserCheck size={11} /> Father</dt>
+                              <dt>
+                                <UserCheck size={11} /> Father
+                              </dt>
                               <dd>
-                                <span className="parent-name">{student.fatherName || "—"}</span>
+                                <span className="parent-name">
+                                  {student.fatherName || "—"}
+                                </span>
                                 {student.fatherMobile && (
                                   <a
                                     className="parent-phone"
@@ -1330,17 +1496,22 @@ function StudentDetails() {
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     <PhoneCall size={10} />
-                                    <span>{formatPhone(student.fatherMobile)}</span>
+                                    <span>
+                                      {formatPhone(student.fatherMobile)}
+                                    </span>
                                   </a>
                                 )}
                               </dd>
                             </div>
 
-                            {/* Mother Block */}
                             <div className="parent-detail-block">
-                              <dt><Heart size={11} /> Mother</dt>
+                              <dt>
+                                <Heart size={11} /> Mother
+                              </dt>
                               <dd>
-                                <span className="parent-name">{student.motherName || "—"}</span>
+                                <span className="parent-name">
+                                  {student.motherName || "—"}
+                                </span>
                                 {student.motherMobile && (
                                   <a
                                     className="parent-phone"
@@ -1348,18 +1519,23 @@ function StudentDetails() {
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     <PhoneCall size={10} />
-                                    <span>{formatPhone(student.motherMobile)}</span>
+                                    <span>
+                                      {formatPhone(student.motherMobile)}
+                                    </span>
                                   </a>
                                 )}
                               </dd>
                             </div>
 
-                            {/* Guardian Block */}
                             {(student.guardianName || student.guardianMobile) && (
                               <div className="parent-detail-block">
-                                <dt><Contact size={11} /> Guardian</dt>
+                                <dt>
+                                  <Contact size={11} /> Guardian
+                                </dt>
                                 <dd>
-                                  <span className="parent-name">{student.guardianName || "—"}</span>
+                                  <span className="parent-name">
+                                    {student.guardianName || "—"}
+                                  </span>
                                   {student.guardianMobile && (
                                     <a
                                       className="parent-phone"
@@ -1367,7 +1543,9 @@ function StudentDetails() {
                                       onClick={(e) => e.stopPropagation()}
                                     >
                                       <PhoneCall size={10} />
-                                      <span>{formatPhone(student.guardianMobile)}</span>
+                                      <span>
+                                        {formatPhone(student.guardianMobile)}
+                                      </span>
                                     </a>
                                   )}
                                 </dd>
@@ -1376,10 +1554,14 @@ function StudentDetails() {
 
                             {student.address && (
                               <div className="grid-full">
-                                <dt><MapPin size={11} /> Address</dt>
+                                <dt>
+                                  <MapPin size={11} /> Address
+                                </dt>
                                 <dd className="address-box">
                                   {student.address}
-                                  {student.pincode ? ` - ${student.pincode}` : ""}
+                                  {student.pincode
+                                    ? ` - ${student.pincode}`
+                                    : ""}
                                 </dd>
                               </div>
                             )}
@@ -1387,7 +1569,10 @@ function StudentDetails() {
                         </div>
 
                         <div className="back-footer">
-                          <span><CalendarDays size={11} /> Submitted on {formatDate(student.createdAt)}</span>
+                          <span>
+                            <CalendarDays size={11} /> Submitted on{" "}
+                            {formatDate(student.createdAt)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1398,6 +1583,276 @@ function StudentDetails() {
           </div>
         )}
       </main>
+
+      {/* ========================================================
+          PORTAL: CUSTOM EXPORT BUILDER MODAL WITH ADVANCED FILTERS
+          ======================================================== */}
+      {showExportModal &&
+        createPortal(
+          <div
+            className="edit-overlay export-overlay-front"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget && !exportingInProgress) {
+                setShowExportModal(false);
+              }
+            }}
+          >
+            <div className="edit-modal export-builder-modal">
+              <div className="edit-modal-header">
+                <div>
+                  <span className="modal-eyebrow">
+                    <SlidersHorizontal size={11} /> EXPORT BUILDER
+                  </span>
+                  <h2>Configure Export Details & Filters</h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="modal-close"
+                  onClick={() => setShowExportModal(false)}
+                  disabled={exportingInProgress}
+                  aria-label="Close export modal"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="export-modal-body">
+                {/* 1. Format & Scope Controls */}
+                <div className="export-config-bar">
+                  <div className="config-option-group">
+                    <label>Download Format</label>
+                    <div className="format-toggle-pills">
+                      <button
+                        type="button"
+                        className={`format-btn format-excel ${exportFormat === "xlsx" ? "active" : ""}`}
+                        onClick={() => setExportFormat("xlsx")}
+                      >
+                        <FileSpreadsheet size={16} className="format-icon icon-excel" />
+                        <span>Excel (.xlsx)</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`format-btn format-pdf ${exportFormat === "pdf" ? "active" : ""}`}
+                        onClick={() => setExportFormat("pdf")}
+                      >
+                        <FileText size={16} className="format-icon icon-pdf" />
+                        <span>PDF (.pdf)</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`format-btn format-word ${exportFormat === "docx" ? "active" : ""}`}
+                        onClick={() => setExportFormat("docx")}
+                      >
+                        <FileType size={16} className="format-icon icon-word" />
+                        <span>Word (.docx)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="config-option-group">
+                    <label>Records Scope</label>
+                    <div className="format-toggle-pills">
+                      <button
+                        type="button"
+                        className={exportScope === "filtered" ? "active" : ""}
+                        onClick={() => setExportScope("filtered")}
+                      >
+                        <Filter size={14} />
+                        <span>Screen Filter ({filteredStudents.length})</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={exportScope === "all" ? "active" : ""}
+                        onClick={() => setExportScope("all")}
+                      >
+                        <Users size={14} />
+                        <span>All Students ({students.length})</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. DEDICATED EXPORT FILTERS: Department & Joining Month */}
+                <div className="export-modal-filters-box">
+                  <span className="export-filters-title">
+                    <Filter size={13} /> Filter Records To Export
+                  </span>
+
+                  <div className="export-filters-grid">
+                    {/* Department Filter inside Modal */}
+                    <div className="modal-filter-field">
+                      <label>
+                        <GraduationCap size={13} /> Target Department
+                      </label>
+                      <select
+                        value={exportDeptFilter}
+                        onChange={(e) => setExportDeptFilter(e.target.value)}
+                      >
+                        <option value="all">All Departments (CS & AIDS)</option>
+                        <option value="cs">Computer Science (CS)</option>
+                        <option value="aids">AI & Data Science (AIDS)</option>
+                      </select>
+                    </div>
+
+                    {/* Joining Date Type Filter inside Modal */}
+                    <div className="modal-filter-field">
+                      <label>
+                        <Calendar size={13} /> Joining Date Filter
+                      </label>
+                      <select
+                        value={exportJoinFilterType}
+                        onChange={(e) => setExportJoinFilterType(e.target.value)}
+                      >
+                        <option value="all">All Joining Dates</option>
+                        <option value="exact-month">In Specific Month</option>
+                        <option value="before-month">Joined Before Month</option>
+                        <option value="after-month">Joined After Month</option>
+                        <option value="range">Specific Date Range</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Month / Date Inputs depending on selection */}
+                  {exportJoinFilterType !== "all" && (
+                    <div className="modal-date-picker-row">
+                      {exportJoinFilterType === "range" ? (
+                        <div className="modal-range-inputs">
+                          <div>
+                            <span className="range-sublabel">From Date:</span>
+                            <input
+                              type="date"
+                              value={exportJoinRangeStart}
+                              onChange={(e) => setExportJoinRangeStart(e.target.value)}
+                              className="modal-date-input"
+                            />
+                          </div>
+                          <div>
+                            <span className="range-sublabel">To Date:</span>
+                            <input
+                              type="date"
+                              value={exportJoinRangeEnd}
+                              onChange={(e) => setExportJoinRangeEnd(e.target.value)}
+                              className="modal-date-input"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="modal-month-input-wrap">
+                          <span className="range-sublabel">Select Target Month:</span>
+                          <input
+                            type="month"
+                            value={exportJoinMonth}
+                            onChange={(e) => setExportJoinMonth(e.target.value)}
+                            className="modal-month-input"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="matched-counter-strip">
+                    <span>
+                      Matching students for export:{" "}
+                      <strong>{finalExportList.length}</strong> of {students.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Quick Column Presets */}
+                <div className="preset-quick-strip">
+                  <span className="preset-lbl">Column Presets:</span>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPreset("all")}
+                  >
+                    <CheckSquare size={13} /> Select All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPreset("academic")}
+                  >
+                    <GraduationCap size={13} /> Academic & Attendance
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPreset("parents")}
+                  >
+                    <UsersRound size={13} /> Parent & Contact
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPreset("none")}
+                  >
+                    <Square size={13} /> Clear All
+                  </button>
+                </div>
+
+                {/* 4. Fields Checklist Grid with Field Icons */}
+                <div className="fields-checklist-container">
+                  <label className="checklist-heading">
+                    Select Columns ({selectedFields.length} selected):
+                  </label>
+                  <div className="fields-checkbox-grid">
+                    {EXPORT_AVAILABLE_FIELDS.map((field) => {
+                      const isChecked = selectedFields.includes(field.id);
+                      const IconComp = field.icon;
+                      return (
+                        <div
+                          key={field.id}
+                          className={`field-checkbox-item ${
+                            isChecked ? "is-checked" : ""
+                          }`}
+                          onClick={() => toggleFieldSelection(field.id)}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {}}
+                          />
+                          <IconComp size={14} className="field-icon-bullet" />
+                          <span>{field.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* MODAL FOOTER: Fixed Download Action */}
+              <div className="edit-modal-footer wide export-modal-footer-pinned">
+                <button
+                  type="button"
+                  className="cancel-edit"
+                  onClick={() => setShowExportModal(false)}
+                  disabled={exportingInProgress}
+                >
+                  <X size={14} /> Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="save-edit download-action-btn"
+                  onClick={executeCustomExport}
+                  disabled={exportingInProgress || selectedFields.length === 0 || finalExportList.length === 0}
+                >
+                  {exportingInProgress ? (
+                    <>
+                      <Loader2 size={16} className="spin-icon" /> Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Download size={16} /> Download Selected File ({finalExportList.length})
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
       {/* PORTAL EDIT MODAL */}
       {editingStudent &&
@@ -1413,7 +1868,9 @@ function StudentDetails() {
             <div className="edit-modal">
               <div className="edit-modal-header">
                 <div>
-                  <span className="modal-eyebrow"><FileText size={11} /> UPDATE RECORD</span>
+                  <span className="modal-eyebrow">
+                    <FileText size={11} /> UPDATE RECORD
+                  </span>
                   <h2>{editingStudent.fullName || "Student"}</h2>
                 </div>
 
@@ -1429,7 +1886,9 @@ function StudentDetails() {
 
               <form className="edit-form" onSubmit={saveEdit}>
                 <div className="edit-field wide student-photo-field">
-                  <label><ImageIcon size={13} /> Student Photo</label>
+                  <label>
+                    <ImageIcon size={13} /> Student Photo
+                  </label>
 
                   <div className="student-photo-editor">
                     <div className="student-photo-preview">
@@ -1475,7 +1934,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field wide">
-                  <label><UserRound size={13} /> Full Name</label>
+                  <label>
+                    <UserRound size={13} /> Full Name
+                  </label>
                   <input
                     name="fullName"
                     value={editingStudent.fullName || ""}
@@ -1484,7 +1945,23 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><MapPinned size={13} /> Study Mode / Location</label>
+                  <label>
+                    <Hash size={13} /> Register Number
+                  </label>
+                  <input
+                    type="text"
+                    name="regNo"
+                    value={editingStudent.regNo || ""}
+                    onChange={handleEditChange}
+                    placeholder="Enter register number"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <div className="edit-field">
+                  <label>
+                    <MapPinned size={13} /> Study Mode / Location
+                  </label>
                   <select
                     name="studyMode"
                     value={editingStudent.studyMode || "regular"}
@@ -1496,7 +1973,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><GraduationCap size={13} /> Department / Course</label>
+                  <label>
+                    <GraduationCap size={13} /> Department / Course
+                  </label>
                   <select
                     name="course"
                     value={editingStudent.course || ""}
@@ -1513,7 +1992,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><CalendarDays size={13} /> Date of Birth</label>
+                  <label>
+                    <CalendarDays size={13} /> Date of Birth
+                  </label>
                   <input
                     type="date"
                     name="dob"
@@ -1523,7 +2004,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><CalendarDays size={13} /> Date of Joining</label>
+                  <label>
+                    <CalendarDays size={13} /> Date of Joining
+                  </label>
                   <input
                     type="date"
                     name="joiningDate"
@@ -1533,7 +2016,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><VenusAndMars size={13} /> Gender</label>
+                  <label>
+                    <VenusAndMars size={13} /> Gender
+                  </label>
                   <select
                     name="gender"
                     value={editingStudent.gender || ""}
@@ -1547,7 +2032,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Droplets size={13} /> Blood Group</label>
+                  <label>
+                    <Droplets size={13} /> Blood Group
+                  </label>
                   <select
                     name="bloodGroup"
                     value={editingStudent.bloodGroup || ""}
@@ -1566,7 +2053,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Phone size={13} /> Student Mobile</label>
+                  <label>
+                    <Phone size={13} /> Student Mobile
+                  </label>
                   <input
                     name="studentMobile"
                     value={editingStudent.studentMobile || ""}
@@ -1575,7 +2064,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Mail size={13} /> Email</label>
+                  <label>
+                    <Mail size={13} /> Email
+                  </label>
                   <input
                     type="email"
                     name="studentEmail"
@@ -1585,7 +2076,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field wide">
-                  <label><MapPin size={13} /> Address</label>
+                  <label>
+                    <MapPin size={13} /> Address
+                  </label>
                   <textarea
                     name="address"
                     rows="3"
@@ -1595,7 +2088,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Hash size={13} /> Pincode</label>
+                  <label>
+                    <Hash size={13} /> Pincode
+                  </label>
                   <input
                     name="pincode"
                     value={editingStudent.pincode || ""}
@@ -1604,7 +2099,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><UserCheck size={13} /> Father's Name</label>
+                  <label>
+                    <UserCheck size={13} /> Father's Name
+                  </label>
                   <input
                     name="fatherName"
                     value={editingStudent.fatherName || ""}
@@ -1613,7 +2110,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><PhoneCall size={13} /> Father's Mobile</label>
+                  <label>
+                    <PhoneCall size={13} /> Father's Mobile
+                  </label>
                   <input
                     name="fatherMobile"
                     value={editingStudent.fatherMobile || ""}
@@ -1622,7 +2121,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Heart size={13} /> Mother's Name</label>
+                  <label>
+                    <Heart size={13} /> Mother's Name
+                  </label>
                   <input
                     name="motherName"
                     value={editingStudent.motherName || ""}
@@ -1631,7 +2132,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><PhoneCall size={13} /> Mother's Mobile</label>
+                  <label>
+                    <PhoneCall size={13} /> Mother's Mobile
+                  </label>
                   <input
                     name="motherMobile"
                     value={editingStudent.motherMobile || ""}
@@ -1640,7 +2143,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><Contact size={13} /> Guardian Name</label>
+                  <label>
+                    <Contact size={13} /> Guardian Name
+                  </label>
                   <input
                     name="guardianName"
                     value={editingStudent.guardianName || ""}
@@ -1649,7 +2154,9 @@ function StudentDetails() {
                 </div>
 
                 <div className="edit-field">
-                  <label><PhoneCall size={13} /> Guardian Mobile</label>
+                  <label>
+                    <PhoneCall size={13} /> Guardian Mobile
+                  </label>
                   <input
                     name="guardianMobile"
                     value={editingStudent.guardianMobile || ""}
